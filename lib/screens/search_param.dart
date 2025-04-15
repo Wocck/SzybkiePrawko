@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'login_webview.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchParam extends StatefulWidget {
 	const SearchParam({super.key});
@@ -146,11 +149,67 @@ void _showWojewodztwaDialog() async {
 				),
 				],
 			),
+			const SizedBox(height: 32),
+			ElevatedButton(
+				onPressed: () async {
+					await Navigator.push(
+						context,
+						MaterialPageRoute(builder: (_) => const LoginWebView()),
+					);
+
+					final prefs = await SharedPreferences.getInstance();
+					final token = prefs.getString('auth_token');
+					print('[DEBUG] Odebrany token z prefs: $token');
+					
+					if (token != null) {
+					ScaffoldMessenger.of(context).showSnackBar(
+						const SnackBar(content: Text('Zalogowano pomyślnie')),
+					);
+					await checkApiAccess();
+					}
+				},
+				child: const Text('Start'),
+			),
 			],
 		),
 		),
 		),
 
 	);
+	}
+
+	Future<void> checkApiAccess() async {
+		final prefs = await SharedPreferences.getInstance();
+		final token = prefs.getString('auth_token');
+
+		
+		if (token == null) {
+			print('[ERROR] Brak tokenu. Użytkownik nie jest zalogowany.');
+			return;
+		}
+
+		final uri = Uri.parse('https://info-car.pl/api/word/word-centers/exam-schedule');
+		try {
+			final response = await http.put(
+			uri,
+			headers: {
+				'Authorization': token,
+				'Content-Type': 'application/json',
+			},
+			body: '''{
+				"category": "B", 
+				"wordId": 1
+			}''',
+			);
+
+			if (response.statusCode == 200) {
+			print('[OK] Odpowiedź z API: ${response.body}');
+			} else {
+			print('[BŁĄD] Status: ${response.statusCode}');
+			print(response.body);
+			}
+		} catch (e) {
+			print('[WYJĄTEK] Nie udało się wywołać API: $e');
+		}
 	}
 }
