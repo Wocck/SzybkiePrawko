@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
 import 'screens/search_param.dart';
 import 'screens/calendar.dart';
+import 'global.dart';
+import 'models.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
 	await initializeDateFormatting('pl_PL');
+
+	// ——— pobranie województw i ośrodków ———
+	final res = await http.get(Uri.parse('https://info-car.pl/api/word/word-centers'));
+	if (res.statusCode == 200) {
+		final jsonString = utf8.decode(res.bodyBytes);
+		final data = jsonDecode(jsonString) as Map<String, dynamic>;
+		GlobalVars.provinces = (data['provinces'] as List)
+			.map((j) => Province.fromJson(j as Map<String, dynamic>))
+			.toList();
+		GlobalVars.words = (data['words'] as List)
+			.map((j) => Word.fromJson(j as Map<String, dynamic>))
+			.toList();
+	}
+
 	runApp(const MyApp());
 }
 
