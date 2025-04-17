@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'login_webview.dart';
 import '../models.dart';
@@ -264,7 +266,7 @@ class _SearchParamState extends State<SearchParam> {
 							);
 							if (token != null) {
 							GlobalVars.bearerToken = token;
-							_checkSession();
+							_checkSession(); 	
 							ScaffoldMessenger.of(context).showSnackBar(
 								const SnackBar(content: Text('Zalogowano pomyślnie')),
 							);
@@ -306,14 +308,25 @@ class _SearchParamState extends State<SearchParam> {
 
 	Future<void> _checkSession() async {
 		final token = GlobalVars.bearerToken;
-		print("TOKEN  = " + token);
 		if (token.isEmpty) {
 			setState(() => sessionActive = false);
 			return;
 		}
-		final res = await http.get(
+
+		final body = jsonEncode({
+			"category": "A",
+			"endDate": "2025-06-20T05:56:03.199Z",
+			"startDate": "2025-04-19T05:56:03.199Z",
+			"wordId": "8001",
+		});
+
+		final res = await http.put(
 			Uri.parse('https://info-car.pl/api/word/word-centers/exam-schedule'),
-			headers: {'Authorization': 'Bearer $token'},
+			headers: {
+				'Authorization': 'Bearer $token',
+				'Content-Type': 'application/json',
+			},
+			body: body,
 		);
 		if (res.statusCode == 200) {
 			setState(() => sessionActive = true);
@@ -324,6 +337,14 @@ class _SearchParamState extends State<SearchParam> {
 				const SnackBar(content: Text('Sesja wygasła. Zaloguj się ponownie.')),
 			);
 			}
+		} else {
+			print("Błąd sesji: ${res.statusCode}");
+			setState(() => sessionActive = false);
+			if (mounted) {
+			ScaffoldMessenger.of(context).showSnackBar(
+				const SnackBar(content: Text('Błąd sesji. Spróbuj ponownie później.')),
+			);
+			}
 		}
 	}
 
@@ -331,8 +352,7 @@ class _SearchParamState extends State<SearchParam> {
 	@override
 	void initState() {
 		super.initState();
-		_checkSession(); // od razu raz
-		_sessionTimer = Timer.periodic(const Duration(minutes: 1), (_) => _checkSession());
+		_sessionTimer = Timer.periodic(const Duration(minutes: 3), (_) => _checkSession());
 	}
 
 	@override
