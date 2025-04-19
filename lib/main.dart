@@ -11,21 +11,30 @@ void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
 	await initializeDateFormatting('pl_PL');
 
-	// ——— pobranie województw i ośrodków ———
-	final res = await http.get(Uri.parse('https://info-car.pl/api/word/word-centers'));
-	if (res.statusCode == 200) {
-		final jsonString = utf8.decode(res.bodyBytes);
-		final data = jsonDecode(jsonString) as Map<String, dynamic>;
-		GlobalVars.provinces = (data['provinces'] as List)
-			.map((j) => Province.fromJson(j as Map<String, dynamic>))
-			.toList();
-		GlobalVars.words = (data['words'] as List)
-			.map((j) => Word.fromJson(j as Map<String, dynamic>))
-			.toList();
+	try {
+		final res = await http.get(Uri.parse('https://info-car.pl/api/word/word-centers'))
+			.timeout(const Duration(seconds: 5));
+		if (res.statusCode == 200) {
+			final data = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+			GlobalVars.provinces = (data['provinces'] as List)
+				.map((j) => Province.fromJson(j as Map<String, dynamic>))
+				.toList();
+			GlobalVars.words = (data['words'] as List)
+				.map((j) => Word.fromJson(j as Map<String, dynamic>))
+				.toList();
+		} else {
+			debugPrint('Niepowodzenie pobierania słowników: ${res.statusCode}');
+		}
+	} catch (e) {
+		
+	debugPrint('Błąd podczas pobierania słowników: $e');
+	GlobalVars.provinces = [];
+	GlobalVars.words = [];
 	}
 
 	runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
 	const MyApp({super.key});
@@ -83,22 +92,22 @@ class _PageContainerState extends State<PageContainer> {
 
 	@override
 	Widget build(BuildContext context) {
-	return Scaffold(
-		body: PageView(
-		controller: _controller,
-		onPageChanged: _onPageChanged,
-		children: const [
-			SearchParam(),
-			CalendarScreen(),
-		],
-		),
-		bottomNavigationBar: Padding(
-		padding: const EdgeInsets.all(8.0),
-		child: Row(
-			mainAxisAlignment: MainAxisAlignment.center,
-			children: List.generate(2, _buildIndicator),
-		),
-		),
-	);
+		return Scaffold(
+			body: PageView(
+			controller: _controller,
+			onPageChanged: _onPageChanged,
+			children: [
+				const SearchParam(),
+				CalendarScreen(events: GlobalVars.examEvents),
+			],
+			),
+			bottomNavigationBar: Padding(
+			padding: const EdgeInsets.all(8.0),
+			child: Row(
+				mainAxisAlignment: MainAxisAlignment.center,
+				children: List.generate(2, _buildIndicator),
+			),
+			),
+		);
 	}
 }

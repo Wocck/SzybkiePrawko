@@ -6,6 +6,7 @@ import '../models.dart';
 import '../global.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:szybkie_prawko/services/api_service.dart';
 
 class SearchParam extends StatefulWidget {
 	const SearchParam({super.key});
@@ -257,26 +258,37 @@ class _SearchParamState extends State<SearchParam> {
 					Row(
 					mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 					children: [
+						if (!sessionActive)
+							ElevatedButton(
+								onPressed: () async {
+								final token = await Navigator.push<String>(
+									context,
+									MaterialPageRoute(builder: (_) => const LoginWebView()),
+								);
+								if (token != null) {
+									GlobalVars.bearerToken = token;
+									await _checkSession();  // natychmiastowa weryfikacja
+									ScaffoldMessenger.of(context).showSnackBar(
+									const SnackBar(content: Text('Zalogowano pomyślnie')),
+									);
+								}
+								},
+								child: const Text('Login'),
+							),
+
 						ElevatedButton(
 						onPressed: () async {
-							final token = await Navigator.push<String>(
-							context,
-							MaterialPageRoute(
-								builder: (_) => const LoginWebView()),
-							);
-							if (token != null) {
-							GlobalVars.bearerToken = token;
-							_checkSession(); 	
-							ScaffoldMessenger.of(context).showSnackBar(
-								const SnackBar(content: Text('Zalogowano pomyślnie')),
-							);
+							try {
+								final List<ExamEvent> events = await ApiService.fetchExamSchedules(selectedWordIds, allWords);
+								GlobalVars.examEvents = events;
+								debugPrint("Pobrano ${events.length} terminów");
+							} on UnauthenticatedException {
+								setState(() {
+									sessionActive = false;
+								});
+							} catch (e) {
+								debugPrint("$e");
 							}
-						},
-						child: const Text('Login'),
-						),
-						ElevatedButton(
-						onPressed: () {
-							// TODO: później tu podłącz „Start”
 						},
 						child: const Text('Start'),
 						),
@@ -304,7 +316,6 @@ class _SearchParamState extends State<SearchParam> {
 		),
 	);
 	}
-
 
 	Future<void> _checkSession() async {
 		final token = GlobalVars.bearerToken;
@@ -338,7 +349,7 @@ class _SearchParamState extends State<SearchParam> {
 			);
 			}
 		} else {
-			print("Błąd sesji: ${res.statusCode}");
+			debugPrint("Błąd sesji: ${res.statusCode}");
 			setState(() => sessionActive = false);
 			if (mounted) {
 			ScaffoldMessenger.of(context).showSnackBar(
@@ -348,11 +359,10 @@ class _SearchParamState extends State<SearchParam> {
 		}
 	}
 
-
 	@override
 	void initState() {
 		super.initState();
-		_sessionTimer = Timer.periodic(const Duration(minutes: 3), (_) => _checkSession());
+		_sessionTimer = Timer.periodic(const Duration(minutes: 2), (_) => _checkSession());
 	}
 
 	@override

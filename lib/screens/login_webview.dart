@@ -13,7 +13,12 @@ class LoginWebView extends StatefulWidget {
 class _LoginWebViewState extends State<LoginWebView> {
 	late InAppWebViewController _webViewController;
 
-	static const _successUrlPrefix = 'https://info-car.pl/new/';
+	static const _loginUrl = 'https://info-car.pl/oauth2/login';
+	static const _successUrlPrefix = 'https://info-car.pl/new';
+	static const _getTokenUrl = 'https://info-car.pl/new/prawo-jazdy/sprawdz-wolny-termin';
+	static const _apiWord = '/api/word/word-centers';
+	static const _targetTokenPath = '/new/prawo-jazdy/sprawdz-wolny-termin';
+	static bool _clicked = false;
 
 	@override
 	Widget build(BuildContext context) {
@@ -21,20 +26,19 @@ class _LoginWebViewState extends State<LoginWebView> {
 		appBar: AppBar(title: const Text('Logowanie')),
 		body: InAppWebView(
 		initialUrlRequest: URLRequest(
-			url: WebUri('https://info-car.pl/oauth2/login'),
+			url: WebUri(_loginUrl)
 		),
 
 		shouldInterceptRequest:
 			(InAppWebViewController controller, WebResourceRequest request) async {
 			final url = request.url.toString();
-			if (url.contains('/api/word/word-centers')) {
+			if (url.contains(_apiWord)) {
 				if (request.headers?.containsKey("Authorization") ?? false) {
 				final authorizationHeader = request.headers?["Authorization"];
 				if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-				final token = authorizationHeader.substring(7); // Pobieramy token bez "Bearer "
+					final token = authorizationHeader.substring(7);
 					GlobalVars.bearerToken = token;
-					//print("token = " + token);
-					Navigator.pop(context);
+					Navigator.pop(context, token);
 				}
 				}
 			}
@@ -43,12 +47,17 @@ class _LoginWebViewState extends State<LoginWebView> {
 
 		onLoadStop: (controller, uri) async {
 			final url = uri?.toString() ?? '';
-			if (url.startsWith(_successUrlPrefix)) {
+			 if (!_clicked && (url == _successUrlPrefix || url == '$_successUrlPrefix/')) {
+				_clicked = true;
 				await controller.evaluateJavascript(source: """
-				const link = document.querySelector('a[href="/new/prawo-jazdy/sprawdz-wolny-termin"]');
-				if (link) {
-					link.click();
-				}
+					(function clickWhenReady() {
+						const link = document.querySelector('a[href="$_targetTokenPath"]');
+						if (link) {
+						link.click();
+						} else {
+						setTimeout(clickWhenReady, 500);
+						}
+					})();
 				""");
 			}
 		},

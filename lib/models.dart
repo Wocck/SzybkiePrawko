@@ -19,3 +19,17 @@ class Word {
 		provinceId: j['provinceId'] as int,
 	);
 }
+
+class ExamEvent {
+	final int wordId;
+	final String wordName;
+	final DateTime dateTime;
+	final int places;
+
+	ExamEvent({
+		required this.wordId,
+		required this.wordName,
+		required this.dateTime,
+		required this.places,
+	});
+}
