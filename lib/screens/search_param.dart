@@ -68,6 +68,10 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 								temp.remove(p.id);
 							}
 						}),
+						tileColor: Theme.of(context).colorScheme.surface,
+						selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
+						shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+						controlAffinity: ListTileControlAffinity.leading,
 					);
 					}),
 				],
@@ -128,39 +132,44 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 							filtered.forEach((w) => temp.remove(w.id));
 						}
 					}),
+					tileColor: Theme.of(context).colorScheme.surface,
+					selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
+					shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+						controlAffinity: ListTileControlAffinity.leading,
 					),
 					const Divider(),
 
 					for (var pid in sortedProvinceIds) ...[
 						Padding(
-						padding: const EdgeInsets.symmetric(vertical: 8),
-						child: Text(
+							padding: const EdgeInsets.symmetric(vertical: 8),
+							child: Text(
 							allProvinces.firstWhere((p) => p.id == pid).name,
 							style: const TextStyle(
-							fontWeight: FontWeight.bold,
-							fontSize: 16,
+								fontWeight: FontWeight.bold,
+								fontSize: 16,
+							),
 							),
 						),
-						),
-						...grouped[pid]!.map((w) {
-						final sel = temp.contains(w.id);
-						return Container(
-							color: sel
-								? Colors.blue.withOpacity(0.1)
-								: Colors.grey.shade50,
-							child: CheckboxListTile(
+						for (var w in grouped[pid]!) CheckboxListTile(
 							title: Text(w.name),
-							value: sel,
+							value: temp.contains(w.id),
 							onChanged: (v) => setD(() {
-								if (v == true){
+								if (v == true) {
 									temp.add(w.id);
 								} else {
 									temp.remove(w.id);
 								}
 							}),
+							controlAffinity: ListTileControlAffinity.leading,
+							tileColor: Theme.of(ctx).colorScheme.surface,
+							selectedTileColor: Theme.of(ctx)
+								.colorScheme
+								.primary
+								.withAlpha((0.1 * 255).round()),
+							shape: RoundedRectangleBorder(
+							borderRadius: BorderRadius.circular(6),
 							),
-						);
-						}),
+						),
 						const Divider(),
 					],
 					],
@@ -169,8 +178,8 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 			actions: [
 				TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Anuluj')),
 				TextButton(onPressed: () {
-				setState(() => GlobalVars.selectedWordIds = temp);
-				Navigator.pop(ctx);
+					setState(() => GlobalVars.selectedWordIds = temp);
+					Navigator.pop(ctx);
 				}, child: const Text('Zatwierdź')),
 			],
 			),
@@ -352,13 +361,14 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 	}
 
 	Future<void> _checkSession() async {
+		if (_isLoading) return;
+
 		if (GlobalVars.bearerToken.isEmpty) {
 			debugPrint("Brak tokenu → sesja nieaktywna");
 			setState(() => sessionActive = false);
 			return;
 		}
 		final token = GlobalVars.bearerToken;
-
 		final body = jsonEncode({
 			"category": "A",
 			"startDate": "2025-04-19T00:00:00.000Z",

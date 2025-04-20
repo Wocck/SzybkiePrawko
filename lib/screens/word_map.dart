@@ -9,11 +9,17 @@ import 'package:intl/intl.dart';
 class WordMapScreen extends StatelessWidget {
 	const WordMapScreen({Key? key}) : super(key: key);
 
+	static final LatLngBounds polandBounds = LatLngBounds(
+		LatLng(49.0, 14.0),
+		LatLng(55.0, 24.5),
+	);
+
 	@override
 	Widget build(BuildContext context) {
 	final selected = GlobalVars.words
 		.where((w) => GlobalVars.selectedWordIds.contains(w.id))
 		.toList();
+	final size = MediaQuery.of(context).size;
 
 	if (selected.isEmpty) {
 		return const Center(child: Text('Brak zaznaczonych ośrodków'));
@@ -22,89 +28,99 @@ class WordMapScreen extends StatelessWidget {
 	final first = selected.first;
 	final center = LatLng(first.latitude, first.longitude);
 
-	return FlutterMap(
-		options: MapOptions(
-		initialCenter: center,
-		initialZoom: 10,
+	return Padding(
+		padding: EdgeInsets.fromLTRB(
+			size.width * 0.05,   // 5% marginesu z lewej
+			size.height * 0.05,  // 5% marginesu od góry
+			size.width * 0.05,   // 5% marginesu z prawej
+			size.height * 0.05,  // 5% marginesu od dołu
 		),
-		children: [
-			TileLayer(
-				urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-				subdomains: const ['a', 'b', 'c'],
-				userAgentPackageName: 'dev.yourapp.package',
-			),
-			MarkerLayer(
-				markers: selected.map((w) {
-				return Marker(
-					point: LatLng(w.latitude, w.longitude),
-					width: 40,
-					height: 40,
-					child: GestureDetector(
-					onTap: () {
-						// filter only events for this word
-						final events = GlobalVars.examEvents
-							.where((e) => e.wordId == w.id)
-							.toList()
-						..sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-						showModalBottomSheet(
-						context: context,
-						isScrollControlled: true,
-						builder: (ctx) => DraggableScrollableSheet(
-							expand: false,
-							initialChildSize: 0.5,
-							minChildSize: 0.3,
-							maxChildSize: 0.9,
-							builder: (_, controller) => Padding(
-							padding: const EdgeInsets.all(16),
-							child: Column(
-								crossAxisAlignment: CrossAxisAlignment.start,
-								children: [
-								Text(w.name,
-									style: const TextStyle(
-										fontSize: 18, fontWeight: FontWeight.bold)),
-								const SizedBox(height: 4),
-								Text(w.address,
-									style: const TextStyle(color: Colors.grey)),
-								const Divider(height: 20),
-								if (events.isEmpty)
-									const Expanded(
-										child: Center(
-											child: Text('Brak terminów dla tego WORDu')))
-								else
-									Expanded(
-									child: ListView.builder(
-										controller: controller,
-										itemCount: events.length,
-										itemBuilder: (_, i) {
-										final e = events[i];
-										final formattedDate = DateFormat.yMMMd('pl_PL')
-											.add_Hm()
-											.format(e.dateTime);
-										return ListTile(
-											leading: const Icon(Icons.event),
-											title: Text(formattedDate),
-											subtitle: Text('Miejsc: ${e.places}'),
-										);
-										},
-									),
-									),
-								],
-							),
-							),
-						),
-						);
-					},
-					child: const Icon(
-						Icons.location_on,
-						color: Colors.red,
-						size: 32,
-					),
-					),
-				);
-				}).toList(),
+		child: FlutterMap(
+			options: MapOptions(
+			initialCenter: center,
+			initialZoom: 10,
+			cameraConstraint: CameraConstraint.contain(bounds: polandBounds),
 			),
-		],
+			children: [
+				TileLayer(
+					urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+					subdomains: const ['a', 'b', 'c'],
+					userAgentPackageName: 'dev.yourapp.package',
+				),
+				MarkerLayer(
+					markers: selected.map((w) {
+					return Marker(
+						point: LatLng(w.latitude, w.longitude),
+						width: 40,
+						height: 40,
+						child: GestureDetector(
+						onTap: () {
+							// filter only events for this word
+							final events = GlobalVars.examEvents
+								.where((e) => e.wordId == w.id)
+								.toList()
+							..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+							showModalBottomSheet(
+							context: context,
+							isScrollControlled: true,
+							builder: (ctx) => DraggableScrollableSheet(
+								expand: false,
+								initialChildSize: 0.5,
+								minChildSize: 0.3,
+								maxChildSize: 0.9,
+								builder: (_, controller) => Padding(
+								padding: const EdgeInsets.all(16),
+								child: Column(
+									crossAxisAlignment: CrossAxisAlignment.start,
+									children: [
+									Text(w.name,
+										style: const TextStyle(
+											fontSize: 18, fontWeight: FontWeight.bold)),
+									const SizedBox(height: 4),
+									Text(w.address,
+										style: const TextStyle(color: Colors.grey)),
+									const Divider(height: 20),
+									if (events.isEmpty)
+										const Expanded(
+											child: Center(
+												child: Text('Brak terminów dla tego WORDu')))
+									else
+										Expanded(
+										child: ListView.builder(
+											controller: controller,
+											itemCount: events.length,
+											itemBuilder: (_, i) {
+											final e = events[i];
+											final formattedDate = DateFormat.yMMMd('pl_PL')
+												.add_Hm()
+												.format(e.dateTime);
+											return ListTile(
+												leading: const Icon(Icons.event),
+												title: Text(formattedDate),
+												subtitle: Text('Miejsc: ${e.places}'),
+											);
+											},
+										),
+										),
+									],
+								),
+								),
+							),
+							);
+						},
+						child: const Icon(
+							Icons.location_on,
+							color: Colors.red,
+							size: 32,
+						),
+						),
+					);
+					}).toList(),
+				),
+			],
+		),
 	);
 	}
 }
