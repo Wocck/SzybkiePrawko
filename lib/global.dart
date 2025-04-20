@@ -6,6 +6,7 @@ class GlobalVars {
 	static List<ExamEvent> examEvents = [];
 	static String bearerToken = '';
 	static List<int> selectedWordIds = [];
+	static bool sessionActive = false;
 
 	static final maxWords = 4;
 }

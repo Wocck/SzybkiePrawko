@@ -25,7 +25,6 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 
 	List<int> selectedProvinceIds = [];
 
-	bool sessionActive = false;
 	Timer? _sessionTimer;
 
 	bool _isLoading = false;
@@ -281,7 +280,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 					Row(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
-						if (!sessionActive)
+						if (!GlobalVars.sessionActive)
 							ElevatedButton(
 								onPressed: () async {
 								await Navigator.push<String>(
@@ -301,7 +300,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 						
 					// Przycisk Start: wyłączony, gdy brak sesji, trwa ładowanie lub >4 ośrodki
 					ElevatedButton(
-						onPressed: (!sessionActive || _isLoading || exceedMax)
+						onPressed: (!GlobalVars.sessionActive || _isLoading || exceedMax)
 							? null
 							: () async {
 								setState(() => _isLoading = true);
@@ -339,7 +338,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 							),
 						],
 
-						if (!sessionActive) ...[
+						if (!GlobalVars.sessionActive) ...[
 							const SizedBox(width: 12),
 							const Text(
 								'Niezalogowany',
@@ -371,7 +370,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 				height: 12,
 				decoration: BoxDecoration(
 				shape: BoxShape.circle,
-				color: sessionActive ? Colors.green : Colors.red,
+				color: GlobalVars.sessionActive ? Colors.green : Colors.red,
 				),
 			),
 			),
@@ -385,7 +384,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 
 		if (GlobalVars.bearerToken.isEmpty) {
 			debugPrint("Brak tokenu → sesja nieaktywna");
-			setState(() => sessionActive = false);
+			setState(() => GlobalVars.sessionActive = false);
 			return;
 		}
 		final token = GlobalVars.bearerToken;
@@ -418,7 +417,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 			debugPrint("→ Błąd sieci przy tokenie: $e");
 		}
 
-		setState(() => sessionActive = isActive);
+		setState(() => GlobalVars.sessionActive = isActive);
 
 		if (!isActive && mounted) {
 			ScaffoldMessenger.of(context).showSnackBar(
