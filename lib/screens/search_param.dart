@@ -191,6 +191,9 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 	@override
 	Widget build(BuildContext context) {
 		super.build(context);
+
+		final exceedMax = GlobalVars.selectedWordIds.length > GlobalVars.maxWords;
+		
 	return Scaffold(
 		appBar: AppBar(title: const Text('Ustawienia wyszukiwania')),
 		body: Stack(
@@ -295,37 +298,54 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 							const SizedBox(width: 10),
 						
 
-						ElevatedButton(
-						onPressed: () async {
-							debugPrint("Sesja: $sessionActive");
-							if (_isLoading) return;
-							setState(() {
-								_isLoading = true;
-							});
-							try {
-								final events = await ApiService.fetchExamSchedules(
+						
+					// Przycisk Start: wyłączony, gdy brak sesji, trwa ładowanie lub >4 ośrodki
+					ElevatedButton(
+						onPressed: (!sessionActive || _isLoading || exceedMax)
+							? null
+							: () async {
+								setState(() => _isLoading = true);
+								try {
+									final events = await ApiService.fetchExamSchedules(
 									GlobalVars.selectedWordIds,
 									allWords,
 									useTimeFilter: _useTimeFilter,
 									startTime: _useTimeFilter ? _startTime : null,
 									endTime:   _useTimeFilter ? _endTime   : null,
-								);
-								GlobalVars.examEvents = events;
-								debugPrint("Pobrano ${events.length} terminów");
-							} on UnauthenticatedException {
-								setState(() {
-									sessionActive = false;
-								});
-							} catch (e) {
-								debugPrint("$e");
-							} finally {
-								setState(() {
-									_isLoading = false;
-								});
-							}
-						},
+									onError: (wordName) {
+									ScaffoldMessenger.of(context).showSnackBar(
+									SnackBar(
+										content: Text('Nie udało się pobrać terminów dla: $wordName'),
+										backgroundColor: Colors.redAccent,
+									),
+									);
+								},
+									);
+									GlobalVars.examEvents = events;
+								} catch (e) {
+									debugPrint("$e");
+								} finally {
+									setState(() => _isLoading = false);
+								}
+								},
 						child: const Text('Start'),
 						),
+						
+						if (exceedMax) ...[
+							const SizedBox(width: 12),
+							const Text(
+								'Max 4 ośrodki naraz',
+								style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+							),
+						],
+
+						if (!sessionActive) ...[
+							const SizedBox(width: 12),
+							const Text(
+								'Niezalogowany',
+								style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+							),
+						]
 					],
 					),
 				],

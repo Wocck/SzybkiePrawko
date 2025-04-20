@@ -11,6 +11,7 @@ class ApiService {
 			bool useTimeFilter = false,
 			TimeOfDay? startTime,
 			TimeOfDay? endTime,
+			void Function(String wordName)? onError,
 		}) async {
 		final now = DateTime.now().toUtc();
 
@@ -31,7 +32,6 @@ class ApiService {
 
 		for (final wId in selectedWordIds) {
 			final token = GlobalVars.bearerToken;
-			await Future.delayed(const Duration(seconds: 3));
 
 			final body = jsonEncode({
 				"category": "A",
@@ -43,6 +43,7 @@ class ApiService {
 			http.Response res;
 			int attempts = 0;
 			const int maxAttempts = 4;
+			bool success = false;
 			do {
 				attempts++;
 				res = await http.put(
@@ -54,7 +55,10 @@ class ApiService {
 					body: body,
 				);
 				final isHtmlError = res.body.trimLeft().startsWith('<html');
-				if (res.statusCode == 200 && !isHtmlError) break;
+				if (res.statusCode == 200 && !isHtmlError) {
+					success = true;
+					break;
+				}
 				if (attempts < maxAttempts) {
 					await Future.delayed(delay);
 				}
@@ -62,12 +66,17 @@ class ApiService {
 
 			final wordName = allWords.firstWhere((w) => w.id == wId).name;
 			if (res.statusCode != 200 || res.body.trimLeft().startsWith('<html')) {
-				debugPrint('Pominięto word \'$wordName\' po $attempts próbach, '
-						'status ${res.statusCode}');
+				success = false;
 				continue;
 			}
 			if (res.statusCode == 401) {
+				success = false;
 				throw UnauthenticatedException();
+			}
+
+			 if (!success) {
+				if (onError != null) onError(wordName);
+				continue;
 			}
 
 			final data = jsonDecode(res.body) as Map<String, dynamic>;
@@ -94,13 +103,7 @@ class ApiService {
 	}
 
 	static Duration _getDelay(int wordCount) {
-		if (wordCount <= 2) {
-			return const Duration(seconds: 0);
-		} else if (wordCount <= 4) {
-			return const Duration(seconds: 2);
-		} else {
-			return const Duration(seconds: 10);
-		}
+		return const Duration(milliseconds: 200);
 	}
 
 	static DateTime _toUtcDateTime(TimeOfDay t) {
