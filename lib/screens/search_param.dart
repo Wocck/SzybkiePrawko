@@ -15,30 +15,25 @@ class SearchParam extends StatefulWidget {
 	State<SearchParam> createState() => _SearchParamState();
 }
 
-class _SearchParamState extends State<SearchParam> {
+class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClientMixin {
+
+	@override
+	bool get wantKeepAlive => true;
+
 	List<Province> allProvinces = GlobalVars.provinces;
 	List<Word> allWords = GlobalVars.words;
 
 	List<int> selectedProvinceIds = [];
-	List<int> selectedWordIds = [];
-
-	TimeOfDay selectedTime = const TimeOfDay(hour: 9, minute: 0);
-	int dayInterval = 1;
 
 	bool sessionActive = false;
 	Timer? _sessionTimer;
 
-	void _pickTime() async {
-	final TimeOfDay? picked = await showTimePicker(
-		context: context,
-		initialTime: selectedTime,
-	);
-	if (picked != null) {
-		setState(() {
-		selectedTime = picked;
-		});
-	}
-	}
+	bool _isLoading = false;
+
+	bool _useTimeFilter = false;
+	TimeOfDay _startTime = const TimeOfDay(hour: 5, minute: 0);
+	TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
+
 
 	void _showProvincesDialog() async {
 		final temp = List<int>.from(selectedProvinceIds);
@@ -55,8 +50,9 @@ class _SearchParamState extends State<SearchParam> {
 					value: temp.length == allProvinces.length,
 					onChanged: (v) => setD(() {
 						temp.clear();
-						if (v == true)
-						temp.addAll(allProvinces.map((p) => p.id));
+						if (v == true) {
+							temp.addAll(allProvinces.map((p) => p.id));
+						}
 					}),
 					),
 					const Divider(),
@@ -66,8 +62,11 @@ class _SearchParamState extends State<SearchParam> {
 						title: Text(p.name),
 						value: sel,
 						onChanged: (v) => setD(() {
-						if (v == true) temp.add(p.id);
-						else          temp.remove(p.id);
+							if (v == true) { 
+								temp.add(p.id);
+							} else {
+								temp.remove(p.id);
+							}
 						}),
 					);
 					}),
@@ -78,10 +77,8 @@ class _SearchParamState extends State<SearchParam> {
 				TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Anuluj')),
 				TextButton(onPressed: () {
 					setState(() {
-						// 1) aktualizujemy wybrane województwa
 						selectedProvinceIds = temp;
-						// 2) usuwamy zaznaczone ośrodki spoza nowego zestawu województw
-						selectedWordIds = selectedWordIds.where((wId) {
+						GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
 							final w = allWords.firstWhere((w) => w.id == wId);
 							return selectedProvinceIds.contains(w.provinceId);
 						}).toList();
@@ -95,19 +92,17 @@ class _SearchParamState extends State<SearchParam> {
 	}
 
 	void _showWordsDialog() async {
-		final temp = List<int>.from(selectedWordIds);
+		final temp = List<int>.from(GlobalVars.selectedWordIds);
 
 		final filtered = allWords
 			.where((w) => selectedProvinceIds.contains(w.provinceId))
 			.toList();
 
-		// 1. Grupowanie
 		final Map<int, List<Word>> grouped = {};
 		for (var w in filtered) {
 			grouped.putIfAbsent(w.provinceId, () => []).add(w);
 		}
 
-		// 2. Sortowanie kluczy wg nazwy województwa
 		final sortedProvinceIds = grouped.keys.toList()
 			..sort((a, b) {
 				final pa = allProvinces.firstWhere((p) => p.id == a).name;
@@ -127,18 +122,16 @@ class _SearchParamState extends State<SearchParam> {
 					title: const Text('Zaznacz wszystkie'),
 					value: filtered.every((w) => temp.contains(w.id)),
 					onChanged: (v) => setD(() {
-						if (v == true)
-						temp.addAll(filtered.map((w) => w.id));
-						else {
-						filtered.forEach((w) => temp.remove(w.id));
+						if (v == true) {
+							temp.addAll(filtered.map((w) => w.id));
+						} else {
+							filtered.forEach((w) => temp.remove(w.id));
 						}
 					}),
 					),
 					const Divider(),
 
-					// 4. Grupy według województw
 					for (var pid in sortedProvinceIds) ...[
-						// nagłówek grupy
 						Padding(
 						padding: const EdgeInsets.symmetric(vertical: 8),
 						child: Text(
@@ -149,7 +142,6 @@ class _SearchParamState extends State<SearchParam> {
 							),
 						),
 						),
-						// lista ośrodków w grupie
 						...grouped[pid]!.map((w) {
 						final sel = temp.contains(w.id);
 						return Container(
@@ -177,7 +169,7 @@ class _SearchParamState extends State<SearchParam> {
 			actions: [
 				TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Anuluj')),
 				TextButton(onPressed: () {
-				setState(() => selectedWordIds = temp);
+				setState(() => GlobalVars.selectedWordIds = temp);
 				Navigator.pop(ctx);
 				}, child: const Text('Zatwierdź')),
 			],
@@ -189,11 +181,11 @@ class _SearchParamState extends State<SearchParam> {
 
 	@override
 	Widget build(BuildContext context) {
+		super.build(context);
 	return Scaffold(
 		appBar: AppBar(title: const Text('Ustawienia wyszukiwania')),
 		body: Stack(
 		children: [
-			// Główna zawartość
 			Center(
 			child: Padding(
 				padding: const EdgeInsets.all(16),
@@ -215,71 +207,100 @@ class _SearchParamState extends State<SearchParam> {
 					onPressed:
 						selectedProvinceIds.isEmpty ? null : _showWordsDialog,
 					child: Text(
-						selectedWordIds.isEmpty
+						GlobalVars.selectedWordIds.isEmpty
 							? 'Wybierz ośrodki'
-							: 'Wybrano ośrodków: ${selectedWordIds.length}',
+							: 'Wybrano ośrodków: ${GlobalVars.selectedWordIds.length}',
 					),
 					),
 
 					const SizedBox(height: 16),
-					ElevatedButton(
-					onPressed: _pickTime,
-					child: Text('Godzina: ${selectedTime.format(context)}'),
-					),
-
-					const SizedBox(height: 16),
-					Row(
-					mainAxisSize: MainAxisSize.min,
-					crossAxisAlignment: CrossAxisAlignment.center,
-					children: [
-						const Text('Powtarzaj co:'),
-						const SizedBox(width: 16),
-						DropdownButton<int>(
-						value: dayInterval,
-						items: List.generate(
-							30,
-							(index) => DropdownMenuItem(
-							value: index + 1,
-							child: Text('${index + 1} dni'),
+					Align(
+						alignment: Alignment.center,
+						child: Card(
+							shape: RoundedRectangleBorder(
+							borderRadius: BorderRadius.circular(12),
+							),
+							color: Theme.of(context).colorScheme.surface,
+							margin: const EdgeInsets.symmetric(vertical: 8),
+							child: Padding(
+							padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+							child: Row(
+								mainAxisSize: MainAxisSize.min,
+								children: [
+								const Text('Ogranicz godzinowo'),
+								const SizedBox(width: 8),
+								Switch(
+									value: _useTimeFilter,
+									onChanged: (v) => setState(() => _useTimeFilter = v),
+								),
+								],
+							),
 							),
 						),
-						onChanged: (val) {
-							if (val != null) {
-							setState(() {
-								dayInterval = val;
-							});
-							}
-						},
-						),
-					],
 					),
+
+					if (_useTimeFilter) ... [
+						Row(
+							mainAxisAlignment: MainAxisAlignment.center,
+							children: [
+							ElevatedButton(
+								onPressed: () async {
+								final t = await showTimePicker(
+									context: context, initialTime: _startTime);
+								if (t != null) setState(() => _startTime = t);
+								},
+								child: Text('Od: ${_startTime.format(context)}'),
+							),
+							const SizedBox(width: 10),
+							ElevatedButton(
+								onPressed: () async {
+								final t = await showTimePicker(
+									context: context, initialTime: _endTime);
+								if (t != null) setState(() => _endTime = t);
+								},
+								child: Text('Do: ${_endTime.format(context)}'),
+							),
+							],
+						),
+						const SizedBox(height: 16),
+					],
 
 					const SizedBox(height: 32),
 					Row(
-					mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
 						if (!sessionActive)
 							ElevatedButton(
 								onPressed: () async {
-								final token = await Navigator.push<String>(
+								await Navigator.push<String>(
 									context,
 									MaterialPageRoute(builder: (_) => const LoginWebView()),
 								);
-								if (token != null) {
-									GlobalVars.bearerToken = token;
-									await _checkSession();  // natychmiastowa weryfikacja
-									ScaffoldMessenger.of(context).showSnackBar(
+								await _checkSession();  // natychmiastowa weryfikacja
+								ScaffoldMessenger.of(context).showSnackBar(
 									const SnackBar(content: Text('Zalogowano pomyślnie')),
-									);
-								}
+								);
 								},
 								child: const Text('Login'),
 							),
+							const SizedBox(width: 10),
+						
 
 						ElevatedButton(
 						onPressed: () async {
+							debugPrint("Sesja: $sessionActive");
+							if (_isLoading) return;
+							setState(() {
+								_isLoading = true;
+							});
 							try {
-								final List<ExamEvent> events = await ApiService.fetchExamSchedules(selectedWordIds, allWords);
+								final events = await ApiService.fetchExamSchedules(
+									GlobalVars.selectedWordIds,
+									allWords,
+									useTimeFilter: _useTimeFilter,
+									startTime: _useTimeFilter ? _startTime : null,
+									endTime:   _useTimeFilter ? _endTime   : null,
+								);
 								GlobalVars.examEvents = events;
 								debugPrint("Pobrano ${events.length} terminów");
 							} on UnauthenticatedException {
@@ -288,6 +309,10 @@ class _SearchParamState extends State<SearchParam> {
 								});
 							} catch (e) {
 								debugPrint("$e");
+							} finally {
+								setState(() {
+									_isLoading = false;
+								});
 							}
 						},
 						child: const Text('Start'),
@@ -299,7 +324,16 @@ class _SearchParamState extends State<SearchParam> {
 			),
 			),
 
-			// Kropka statusu w prawym dolnym rogu
+			if (_isLoading)
+				Positioned.fill(
+					child: Container(
+						color: Colors.black54,
+						child: const Center(
+							child: CircularProgressIndicator(),
+						),
+					),
+				),
+			
 			Positioned(
 			bottom: 16,
 			right: 16,
@@ -318,46 +352,51 @@ class _SearchParamState extends State<SearchParam> {
 	}
 
 	Future<void> _checkSession() async {
-		final token = GlobalVars.bearerToken;
-		if (token.isEmpty) {
+		if (GlobalVars.bearerToken.isEmpty) {
+			debugPrint("Brak tokenu → sesja nieaktywna");
 			setState(() => sessionActive = false);
 			return;
 		}
+		final token = GlobalVars.bearerToken;
 
 		final body = jsonEncode({
 			"category": "A",
-			"endDate": "2025-06-20T05:56:03.199Z",
-			"startDate": "2025-04-19T05:56:03.199Z",
+			"startDate": "2025-04-19T00:00:00.000Z",
+			"endDate": "2025-06-20T00:00:00.000Z",
 			"wordId": "8001",
 		});
 
-		final res = await http.put(
-			Uri.parse('https://info-car.pl/api/word/word-centers/exam-schedule'),
-			headers: {
+		bool isActive = false;
+
+		try {
+			final res = await http.put(
+				Uri.parse('https://info-car.pl/api/word/word-centers/exam-schedule'),
+				headers: {
 				'Authorization': 'Bearer $token',
 				'Content-Type': 'application/json',
-			},
-			body: body,
-		);
-		if (res.statusCode == 200) {
-			setState(() => sessionActive = true);
-		} else if (res.statusCode == 401) {
-			setState(() => sessionActive = false);
-			if (mounted) {
-			ScaffoldMessenger.of(context).showSnackBar(
-				const SnackBar(content: Text('Sesja wygasła. Zaloguj się ponownie.')),
+				},
+				body: body,
 			);
+
+			if (res.statusCode == 200 && !res.body.trimLeft().startsWith('<html')) {
+				isActive = true;
+			} else {
+				debugPrint("✗ token odrzucony (status=${res.statusCode})");
 			}
-		} else {
-			debugPrint("Błąd sesji: ${res.statusCode}");
-			setState(() => sessionActive = false);
-			if (mounted) {
+
+		} catch (e) {
+			debugPrint("→ Błąd sieci przy tokenie: $e");
+		}
+
+		setState(() => sessionActive = isActive);
+
+		if (!isActive && mounted) {
 			ScaffoldMessenger.of(context).showSnackBar(
-				const SnackBar(content: Text('Błąd sesji. Spróbuj ponownie później.')),
+				const SnackBar(content: Text('Sesja wygasła, zaloguj się ponownie')),
 			);
-			}
 		}
 	}
+	
 
 	@override
 	void initState() {

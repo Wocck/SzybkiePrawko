@@ -12,11 +12,26 @@ class Word {
 	final int id;
 	final String name;
 	final int provinceId;
-	Word({required this.id, required this.name, required this.provinceId});
+	final String address;
+	final double latitude;
+	final double longitude;
+
+	 Word({
+		required this.id,
+		required this.name,
+		required this.provinceId,
+		required this.address,
+		required this.latitude,
+		required this.longitude,
+	});
+	
 	factory Word.fromJson(Map<String, dynamic> j) => Word(
 		id: j['id'] as int,
 		name: j['name'] as String,
 		provinceId: j['provinceId'] as int,
+		address: j['address'] as String,
+		latitude: double.parse(j['latitude'] as String),
+		longitude: double.parse(j['longitude'] as String),
 	);
 }
 

@@ -12,6 +12,7 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
 	DateTime _focusedMonth = DateTime.now();
+	static const List<String> _weekdays = ['Pn','Wt','Śr','Cz','Pt','Sb','Nd'];
 
 	void _goToPreviousMonth() => setState(() {
 		_focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month - 1);
@@ -128,6 +129,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
 				IconButton(onPressed: _goToNextMonth, icon: const Icon(Icons.arrow_forward)),
 				],
 			),
+			),
+			Padding(
+				padding: const EdgeInsets.symmetric(horizontal: 8),
+				child: Row(
+				children: _weekdays.map((d) => Expanded(
+					child: Center(
+					child: Text(
+						d,
+						style: const TextStyle(fontWeight: FontWeight.bold),
+					),
+					),
+				)).toList(),
+				),
 			),
 			Expanded(
 			child: GridView.count(

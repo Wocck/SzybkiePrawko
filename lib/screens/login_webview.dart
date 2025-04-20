@@ -15,10 +15,15 @@ class _LoginWebViewState extends State<LoginWebView> {
 
 	static const _loginUrl = 'https://info-car.pl/oauth2/login';
 	static const _successUrlPrefix = 'https://info-car.pl/new';
-	static const _getTokenUrl = 'https://info-car.pl/new/prawo-jazdy/sprawdz-wolny-termin';
 	static const _apiWord = '/api/word/word-centers';
 	static const _targetTokenPath = '/new/prawo-jazdy/sprawdz-wolny-termin';
-	static bool _clicked = false;
+	bool _clicked = false;
+
+	@override
+	void initState() {
+		super.initState();
+		_clicked = false;
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -39,6 +44,7 @@ class _LoginWebViewState extends State<LoginWebView> {
 					final token = authorizationHeader.substring(7);
 					GlobalVars.bearerToken = token;
 					Navigator.pop(context, token);
+					debugPrint(token);
 				}
 				}
 			}
