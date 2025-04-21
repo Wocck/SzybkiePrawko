@@ -48,3 +48,21 @@ class ExamEvent {
 		required this.places,
 	});
 }
+
+class WordMoto {
+	final int wordId;
+	final String word;
+	final String moto;
+
+	WordMoto({
+		required this.wordId,
+		required this.word,
+		required this.moto
+	});
+
+	factory WordMoto.fromJson(Map<String, dynamic> j) => WordMoto(
+		wordId:int.tryParse(j['ID']) as int,
+		word: j['WORD'] as String,
+		moto: j['MOTO'] as String,
+	);
+}

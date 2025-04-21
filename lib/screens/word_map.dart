@@ -73,6 +73,11 @@ class WordMapScreen extends StatelessWidget {
 	}
 
 	void _openWordSheet(BuildContext context, Word w) {
+		final motoEntry = GlobalVars.wordMotos.firstWhere(
+			(m) => m.wordId == w.id,
+			orElse: () => WordMoto(wordId: w.id, moto: '-', word: '-'),
+		);
+
 		showModalBottomSheet(
 		context: context,
 		isScrollControlled: true,
@@ -94,10 +99,11 @@ class WordMapScreen extends StatelessWidget {
 				child: Column(
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-					Text(w.name,
+					Text(
+						'${w.name} —> ${motoEntry.moto}',
 						style: const TextStyle(
-						fontSize: 18, fontWeight: FontWeight.bold
-						)
+							fontSize: 18, fontWeight: FontWeight.bold
+						),
 					),
 					const SizedBox(height: 4),
 					Text(w.address, style: const TextStyle(color: Colors.grey)),

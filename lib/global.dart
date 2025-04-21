@@ -7,6 +7,7 @@ class GlobalVars {
 	static String bearerToken = '';
 	static List<int> selectedWordIds = [];
 	static bool sessionActive = false;
+	static List<WordMoto> wordMotos = [];
 
 	static final maxWords = 4;
 }

@@ -7,11 +7,13 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'screens/word_map.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
 	await initializeDateFormatting('pl_PL');
+	await loadWordMotos();
 
 	try {
 		final res = await http.get(Uri.parse('https://info-car.pl/api/word/word-centers'))
@@ -152,4 +154,14 @@ class _PageContainerState extends State<PageContainer> {
 		),
 	);
 	}
+}
+
+Future<void> loadWordMotos() async {
+	final jsonStr = await rootBundle.loadString('assets/moto.json');
+	final List<dynamic> jsonList = jsonDecode(jsonStr) as List<dynamic>;
+
+	final motos = jsonList
+		.map((e) => WordMoto.fromJson(e as Map<String, dynamic>))
+		.toList();
+	GlobalVars.wordMotos = motos;
 }
