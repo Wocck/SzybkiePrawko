@@ -11,7 +11,6 @@ class LoginWebView extends StatefulWidget {
 }
 
 class _LoginWebViewState extends State<LoginWebView> {
-	late InAppWebViewController _webViewController;
 
 	static const _loginUrl = 'https://info-car.pl/oauth2/login';
 	static const _successUrlPrefix = 'https://info-car.pl/new';
@@ -67,10 +66,7 @@ class _LoginWebViewState extends State<LoginWebView> {
 				""");
 			}
 		},
-
-		onWebViewCreated: (controller) {
-			_webViewController = controller;
-		},
+		
 		),
 	);
 	}

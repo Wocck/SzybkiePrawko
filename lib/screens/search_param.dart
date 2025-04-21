@@ -128,7 +128,9 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 						if (v == true) {
 							temp.addAll(filtered.map((w) => w.id));
 						} else {
-							filtered.forEach((w) => temp.remove(w.id));
+							for (final w in filtered) {
+								temp.remove(w.id);
+							}
 						}
 					}),
 					tileColor: Theme.of(context).colorScheme.surface,
@@ -287,7 +289,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 									context,
 									MaterialPageRoute(builder: (_) => const LoginWebView()),
 								);
-								await _checkSession();  // natychmiastowa weryfikacja
+								await _checkSession(); 
 								ScaffoldMessenger.of(context).showSnackBar(
 									const SnackBar(content: Text('Zalogowano pomyślnie')),
 								);

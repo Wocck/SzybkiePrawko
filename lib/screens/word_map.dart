@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:szybkie_prawko/services/api_service.dart';
 
 class WordMapScreen extends StatelessWidget {
-	const WordMapScreen({Key? key}) : super(key: key);
+	const WordMapScreen({super.key});
 
 	static final LatLngBounds polandBounds = LatLngBounds(
 		LatLng(49.0, 14.0),
@@ -26,7 +26,7 @@ class WordMapScreen extends StatelessWidget {
 		if (selected.isEmpty) {
 		return const Center(child: Text('Brak zaznaczonych ośrodków'));
 		}
-		final first = selected.first;
+
 		final center = polandBounds.center;
 
 		return Padding (
@@ -134,11 +134,6 @@ class WordMapScreen extends StatelessWidget {
 									}
 									} : () async {
 							setSt(() => isLoading = true);
-							final now = DateTime.now().toUtc();
-							final nextMonth = DateTime(
-								now.year, now.month+1, now.day,
-								now.hour, now.minute
-							).toUtc();
 							try {
 								final fetched = await ApiService.fetchExamSchedules(
 								[w.id], GlobalVars.words,
