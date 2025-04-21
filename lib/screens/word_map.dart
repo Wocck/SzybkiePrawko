@@ -16,6 +16,10 @@ class WordMapScreen extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
+		final size = MediaQuery.of(context).size;
+		final horizontalMargin = size.width * 0.05;
+		final verticalMargin   = size.height * 0.05;
+
 		final selected = GlobalVars.words
 			.where((w) => GlobalVars.selectedWordIds.contains(w.id))
 			.toList();
@@ -23,40 +27,48 @@ class WordMapScreen extends StatelessWidget {
 		return const Center(child: Text('Brak zaznaczonych ośrodków'));
 		}
 		final first = selected.first;
-		final center = LatLng(first.latitude, first.longitude);
+		final center = polandBounds.center;
 
-		return FlutterMap(
-		options: MapOptions(
-			initialCenter: center,
-			initialZoom: 10,
-			cameraConstraint: CameraConstraint.contain(bounds: polandBounds),
-		),
-		children: [
-			TileLayer(
-			urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			subdomains: const ['a','b','c'],
-			userAgentPackageName: 'dev.yourapp.package',
+		return Padding (
+			padding: EdgeInsets.fromLTRB(
+				horizontalMargin,
+				verticalMargin,
+				horizontalMargin,
+				verticalMargin,
 			),
-			MarkerLayer(
-			markers: selected.map((w) {
-				return Marker(
-				point: LatLng(w.latitude, w.longitude),
-				width: 40,
-				height: 40,
-				child: GestureDetector(
-					onTap: () {
-					_openWordSheet(context, w);
-					},
-					child: const Icon(
-					Icons.location_on,
-					color: Colors.red,
-					size: 32,
-					),
+			child: FlutterMap(
+				options: MapOptions(
+				initialCenter: center,
+				initialZoom: 10,
+				cameraConstraint: CameraConstraint.contain(bounds: polandBounds),
+			),
+			children: [
+				TileLayer(
+				urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+				subdomains: const ['a','b','c'],
+				userAgentPackageName: 'dev.yourapp.package',
 				),
-				);
-			}).toList(),
+				MarkerLayer(
+				markers: selected.map((w) {
+					return Marker(
+					point: LatLng(w.latitude, w.longitude),
+					width: 40,
+					height: 40,
+					child: GestureDetector(
+						onTap: () {
+						_openWordSheet(context, w);
+						},
+						child: const Icon(
+						Icons.location_on,
+						color: Colors.red,
+						size: 32,
+						),
+					),
+					);
+				}).toList(),
+				),
+			],
 			),
-		],
 		);
 	}
 
