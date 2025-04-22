@@ -23,55 +23,55 @@ class _CalendarScreenState extends State<CalendarScreen> {
 		});
 
 	List<Widget> _buildDaysGrid() {
-	final List<Widget> dayTiles = [];
-	final firstDay = DateTime(_focusedMonth.year, _focusedMonth.month, 1);
-	final daysInMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1, 0).day;
-	final startWeekday = firstDay.weekday;
+		final List<Widget> dayTiles = [];
+		final firstDay = DateTime(_focusedMonth.year, _focusedMonth.month, 1);
+		final daysInMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1, 0).day;
+		final startWeekday = firstDay.weekday;
 
-	for (var i = 1; i < startWeekday; i++) {
-		dayTiles.add(const SizedBox.shrink());
-	}
+		for (var i = 1; i < startWeekday; i++) {
+			dayTiles.add(const SizedBox.shrink());
+		}
 
-	for (var day = 1; day <= daysInMonth; day++) {
-		final date = DateTime(_focusedMonth.year, _focusedMonth.month, day);
-		final dayEvents = widget.events.where((e) =>
-			e.dateTime.year == date.year &&
-			e.dateTime.month == date.month &&
-			e.dateTime.day == date.day).toList();
+		for (var day = 1; day <= daysInMonth; day++) {
+			final date = DateTime(_focusedMonth.year, _focusedMonth.month, day);
+			final dayEvents = widget.events.where((e) =>
+				e.dateTime.year == date.year &&
+				e.dateTime.month == date.month &&
+				e.dateTime.day == date.day).toList();
 
-		dayTiles.add(
-		GestureDetector(
-			onTap: dayEvents.isEmpty ? null : () => _showDayDetails(date, dayEvents),
-			child: Container(
-			margin: const EdgeInsets.all(2),
-			padding: const EdgeInsets.all(4),
-			decoration: BoxDecoration(
-				border: Border.all(color: Colors.grey.shade300),
-				color: dayEvents.isNotEmpty ? Colors.blue.shade100 : null,
-				borderRadius: BorderRadius.circular(4),
-			),
-			child: Stack(
-				children: [
-				Align(
-					alignment: Alignment.topLeft,
-					child: Text('$day', style: const TextStyle(fontWeight: FontWeight.bold)),
+			dayTiles.add(
+			GestureDetector(
+				onTap: dayEvents.isEmpty ? null : () => _showDayDetails(date, dayEvents),
+				child: Container(
+				margin: const EdgeInsets.all(2),
+				padding: const EdgeInsets.all(4),
+				decoration: BoxDecoration(
+					border: Border.all(color: Colors.grey.shade300),
+					color: dayEvents.isNotEmpty ? const Color.fromARGB(255, 21, 99, 163) : null,
+					borderRadius: BorderRadius.circular(4),
 				),
-				if (dayEvents.isNotEmpty)
+				child: Stack(
+					children: [
 					Align(
-					alignment: Alignment.bottomRight,
-					child: Text(
-						'${dayEvents.length}',
-						style: const TextStyle(fontSize: 12),
+						alignment: Alignment.topLeft,
+						child: Text('$day', style: const TextStyle(fontWeight: FontWeight.bold)),
 					),
-					),
-				],
+					if (dayEvents.isNotEmpty)
+						Align(
+						alignment: Alignment.bottomRight,
+						child: Text(
+							'${dayEvents.length}',
+							style: const TextStyle(fontSize: 12),
+						),
+						),
+					],
+				),
+				),
 			),
-			),
-		),
-		);
-	}
+			);
+		}
 
-	return dayTiles;
+		return dayTiles;
 	}
 
 	void _showDayDetails(DateTime date, List<ExamEvent> events) {
