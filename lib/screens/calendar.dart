@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:szybkie_prawko/global.dart';
 import '../models.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -75,39 +76,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
 	}
 
 	void _showDayDetails(DateTime date, List<ExamEvent> events) {
-	showModalBottomSheet(
-		context: context,
-		isScrollControlled: true,
-		builder: (BuildContext ctx) {
-		final maxHeight = MediaQuery.of(ctx).size.height * 0.5;
-		return Container(
-			constraints: BoxConstraints(maxHeight: maxHeight),
-			padding: const EdgeInsets.all(16),
-			child: Column(
-			children: [
-				Text(
-				DateFormat.yMMMMd('pl_PL').format(date),
-				style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+		
+
+		showModalBottomSheet(
+			context: context,
+			isScrollControlled: true,
+			builder: (BuildContext ctx) {
+			final maxHeight = MediaQuery.of(ctx).size.height * 0.5;
+			return Container(
+				constraints: BoxConstraints(maxHeight: maxHeight),
+				padding: const EdgeInsets.all(16),
+				child: Column(
+				children: [
+					Text(
+					DateFormat.yMMMMd('pl_PL').format(date),
+					style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+					),
+					const SizedBox(height: 8),
+					Expanded(
+					child: ListView.builder(
+						itemCount: events.length,
+						itemBuilder: (context, index) {
+						final e = events[index];
+						final motoEntry = GlobalVars.wordMotos.firstWhere(
+							(m) => m.wordId == e.wordId,
+							orElse: () => WordMoto(wordId: e.wordId, moto: '-', word: '-'),
+						);
+						return ListTile(
+							title: Text(e.wordName),
+							subtitle: Text('${DateFormat.Hm('pl_PL').format(e.dateTime)}, ${motoEntry.moto}'),
+							trailing: Text('Miejsc: ${e.places}'), 
+						);
+						},
+					),
+					),
+				],
 				),
-				const SizedBox(height: 8),
-				Expanded(
-				child: ListView.builder(
-					itemCount: events.length,
-					itemBuilder: (context, index) {
-					final e = events[index];
-					return ListTile(
-						title: Text(e.wordName),
-						subtitle: Text(DateFormat.Hm('pl_PL').format(e.dateTime)),
-						trailing: Text('Miejsc: ${e.places}'),
-					);
-					},
-				),
-				),
-			],
-			),
+			);
+			},
 		);
-		},
-	);
 	}
 
 
