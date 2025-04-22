@@ -11,6 +11,75 @@ class ApiService {
 	static const _successUrlPrefix = 'https://info-car.pl/new';
 	static const _apiWordEndpoint = '/api/word/word-centers';
 	static const _targetTokenPath = '/new/prawo-jazdy/sprawdz-wolny-termin';
+	static const _wordCenters = 'https://info-car.pl/api/word/word-centers';
+	static const _checkToken = 'https://info-car.pl/api/word/word-centers/exam-schedule';
+
+	static Future<void> checkSession() async {
+		final token = GlobalVars.bearerToken;
+
+		bool isActive = false;
+		if (token.isNotEmpty) {
+			try {
+				final now = DateTime.now().toUtc();
+				final body = jsonEncode({
+					"category": "A",
+					"startDate": now.toIso8601String(),
+					"endDate": now.add(const Duration(days: 1)).toIso8601String(),
+					"wordId": "8001",
+				});
+				final res = await http.put(
+					Uri.parse(_checkToken),
+					headers: {
+					'Authorization': 'Bearer $token',
+					'Content-Type': 'application/json',
+					},
+					body: body,
+				);
+				isActive = res.statusCode == 200 && !res.body.trimLeft().startsWith('<html');
+			} catch (_) {
+				isActive = false;
+			}
+		}
+
+		GlobalVars.sessionActive = isActive;
+
+		if (!isActive) {
+			debugPrint('Sesja wygasła, logowanie ponowne...');
+			final newToken = await ApiService.loginHeadless();
+			GlobalVars.sessionActive = newToken.isNotEmpty;
+			return;
+		}
+
+		if (isActive && (GlobalVars.words.isEmpty || GlobalVars.provinces.isEmpty)) {
+			await ApiService.loadWordCenters();
+		}
+	}
+
+	static Future<void> loadWordCenters() async {
+		try {
+			final res = await http
+				.get(Uri.parse(_wordCenters))
+				.timeout(const Duration(seconds: 5));
+			if (res.statusCode == 200) {
+				final data =
+					jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+				GlobalVars.provinces = (data['provinces'] as List)
+					.map((j) => Province.fromJson(j as Map<String, dynamic>))
+					.toList();
+				GlobalVars.words = (data['words'] as List)
+					.map((j) => Word.fromJson(j as Map<String, dynamic>))
+					.toList();
+			} else {
+				debugPrint('Niepowodzenie pobierania słowników: ${res.statusCode}');
+				GlobalVars.provinces = [];
+				GlobalVars.words = [];
+			}
+		} catch (e) {
+			debugPrint('Błąd podczas pobierania słowników: $e');
+			GlobalVars.provinces = [];
+			GlobalVars.words = [];
+		}
+	}
 
 	static Future<String> loginHeadless() async {
 		final completer = Completer<String>();

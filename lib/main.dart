@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:szybkie_prawko/services/api_service.dart';
 import 'screens/search_param.dart';
 import 'screens/calendar.dart';
 import 'global.dart';
 import 'models.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'screens/word_map.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
 
 
 void main() async {
@@ -19,26 +20,7 @@ void main() async {
 
 	await initializeDateFormatting('pl_PL');
 	await loadWordMotos();
-
-	try {
-		final res = await http.get(Uri.parse('https://info-car.pl/api/word/word-centers'))
-			.timeout(const Duration(seconds: 5));
-		if (res.statusCode == 200) {
-			final data = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
-			GlobalVars.provinces = (data['provinces'] as List)
-				.map((j) => Province.fromJson(j as Map<String, dynamic>))
-				.toList();
-			GlobalVars.words = (data['words'] as List)
-				.map((j) => Word.fromJson(j as Map<String, dynamic>))
-				.toList();
-		} else {
-			debugPrint('Niepowodzenie pobierania słowników: ${res.statusCode}');
-		}
-	} catch (e) {
-		debugPrint('Błąd podczas pobierania słowników: $e');
-		GlobalVars.provinces = [];
-		GlobalVars.words = [];
-	}
+	await ApiService.loadWordCenters();
 	
 	runApp(const MyApp());
 }

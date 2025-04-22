@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models.dart';
 import '../global.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
 import 'package:szybkie_prawko/services/api_service.dart';
 
 class SearchParam extends StatefulWidget {
@@ -40,40 +38,44 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		builder: (_) => StatefulBuilder(
 			builder: (ctx, setD) => AlertDialog(
 			title: const Text('Wybierz województwa'),
-			content: SingleChildScrollView(
-				child: Column(
-				children: [
-					CheckboxListTile(
-					title: const Text('Zaznacz wszystkie'),
-					value: temp.length == allProvinces.length,
-					onChanged: (v) => setD(() {
-						temp.clear();
-						if (v == true) {
-							temp.addAll(allProvinces.map((p) => p.id));
-						}
-					}),
+				content: SingleChildScrollView(
+					child: Column(
+					children: [
+						CheckboxListTile(
+							title: const Text('Zaznacz wszystkie'),
+							value: temp.length == allProvinces.length,
+							onChanged: (v) => setD(() {
+								temp.clear();
+								if (v == true) {
+									temp.addAll(allProvinces.map((p) => p.id));
+								}
+							}),
+						),
+
+						const Divider(),
+							...allProvinces.map((p) {
+								final sel = temp.contains(p.id);
+								return Padding(
+									padding: const EdgeInsets.symmetric(vertical: 2.0),
+									child: CheckboxListTile(
+										title: Text(p.name),
+										value: sel,
+										onChanged: (v) => setD(() {
+											if (v == true) { 
+												temp.add(p.id);
+											} else {
+												temp.remove(p.id);
+											}
+										}),
+										tileColor: Theme.of(context).colorScheme.surface,
+										selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
+										shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+										controlAffinity: ListTileControlAffinity.leading,
+									),
+								);
+							}),
+					],
 					),
-					const Divider(),
-					...allProvinces.map((p) {
-					final sel = temp.contains(p.id);
-					return CheckboxListTile(
-						title: Text(p.name),
-						value: sel,
-						onChanged: (v) => setD(() {
-							if (v == true) { 
-								temp.add(p.id);
-							} else {
-								temp.remove(p.id);
-							}
-						}),
-						tileColor: Theme.of(context).colorScheme.surface,
-						selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
-						shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-						controlAffinity: ListTileControlAffinity.leading,
-					);
-					}),
-				],
-				),
 			),
 			actions: [
 				TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Anuluj')),
@@ -150,24 +152,27 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 							),
 							),
 						),
-						for (var w in grouped[pid]!) CheckboxListTile(
-							title: Text(w.name),
-							value: temp.contains(w.id),
-							onChanged: (v) => setD(() {
-								if (v == true) {
-									temp.add(w.id);
-								} else {
-									temp.remove(w.id);
-								}
-							}),
-							controlAffinity: ListTileControlAffinity.leading,
-							tileColor: Theme.of(ctx).colorScheme.surface,
-							selectedTileColor: Theme.of(ctx)
-								.colorScheme
-								.primary
-								.withAlpha((0.1 * 255).round()),
-							shape: RoundedRectangleBorder(
-							borderRadius: BorderRadius.circular(6),
+						for (var w in grouped[pid]!) Padding(
+							padding: const EdgeInsets.symmetric(vertical: 2.0),
+							child: CheckboxListTile(
+								title: Text(w.name),
+								value: temp.contains(w.id),
+								onChanged: (v) => setD(() {
+									if (v == true) {
+										temp.add(w.id);
+									} else {
+										temp.remove(w.id);
+									}
+								}),
+								controlAffinity: ListTileControlAffinity.leading,
+								tileColor: Theme.of(ctx).colorScheme.surface,
+								selectedTileColor: Theme.of(ctx)
+									.colorScheme
+									.primary
+									.withAlpha((0.1 * 255).round()),
+								shape: RoundedRectangleBorder(
+									borderRadius: BorderRadius.circular(6),
+								),
 							),
 						),
 						const Divider(),
@@ -373,57 +378,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		),
 	);
 	}
-
-	Future<void> _checkSession() async {
-		if (_isLoading) return;
-
-		if (GlobalVars.bearerToken.isEmpty) {
-			debugPrint("Brak tokenu → sesja nieaktywna");
-			setState(() => GlobalVars.sessionActive = false);
-			return;
-		}
-		final token = GlobalVars.bearerToken;
-		final body = jsonEncode({
-			"category": "A",
-			"startDate": "2025-04-19T00:00:00.000Z",
-			"endDate": "2025-06-20T00:00:00.000Z",
-			"wordId": "8001",
-		});
-
-		bool isActive = false;
-
-		try {
-			final res = await http.put(
-				Uri.parse('https://info-car.pl/api/word/word-centers/exam-schedule'),
-				headers: {
-				'Authorization': 'Bearer $token',
-				'Content-Type': 'application/json',
-				},
-				body: body,
-			);
-
-			if (res.statusCode == 200 && !res.body.trimLeft().startsWith('<html')) {
-				isActive = true;
-			} else {
-				debugPrint("✗ token odrzucony (status=${res.statusCode})");
-			}
-
-		} catch (e) {
-			debugPrint("→ Błąd sieci przy tokenie: $e");
-		}
-
-		setState(() => GlobalVars.sessionActive = isActive);
-
-		if (!isActive && mounted) {
-			final token = await ApiService.loginHeadless();
-			if (token.isNotEmpty) {
-				debugPrint('Logged in, token=$token');
-				await _checkSession();
-			}
-		}
-	}
 	
-
 	@override
 	void initState() {
 		super.initState();
@@ -444,7 +399,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 			debugPrint('Headless login failed: $e');
 		}
 
-		_sessionTimer = Timer.periodic(const Duration(minutes: 2), (_) => _checkSession());
+		_sessionTimer = Timer.periodic(const Duration(seconds: 30), (_) => ApiService.checkSession());
 	}
 
 	@override
