@@ -5,6 +5,7 @@ import '../global.dart';
 import '../models.dart';
 import 'package:intl/intl.dart';
 import 'package:szybkie_prawko/services/api_service.dart';
+import 'package:flutter/services.dart';
 
 class WordMapScreen extends StatelessWidget {
 	const WordMapScreen({super.key});
@@ -106,7 +107,21 @@ class WordMapScreen extends StatelessWidget {
 						),
 					),
 					const SizedBox(height: 4),
-					Text(w.address, style: const TextStyle(color: Colors.grey)),
+					Row (
+						children: [
+							SelectableText(w.address, style: const TextStyle(color: Colors.grey)),
+							IconButton(
+								icon: const Icon(Icons.copy, size: 20),
+								tooltip: 'Kopiuj adres',
+								onPressed: () {
+									Clipboard.setData(ClipboardData(text: w.address));
+									ScaffoldMessenger.of(ctx).showSnackBar(
+									const SnackBar(content: Text('Adres skopiowany do schowka')),
+									);
+								},
+							),
+						],
+					),
 					const Divider(height: 20),
 					Row(
 						children: [
