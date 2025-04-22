@@ -3,8 +3,87 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:szybkie_prawko/global.dart';
 import 'package:szybkie_prawko/models.dart';
+import 'dart:async';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class ApiService {
+	static const _loginUrl = 'https://info-car.pl/oauth2/login';
+	static const _successUrlPrefix = 'https://info-car.pl/new';
+	static const _apiWordEndpoint = '/api/word/word-centers';
+	static const _targetTokenPath = '/new/prawo-jazdy/sprawdz-wolny-termin';
+
+	static Future<String> loginHeadless() async {
+		final completer = Completer<String>();
+		
+		final login = await CredentialsStorage.getLogin() ?? '';
+		final password = await CredentialsStorage.getPassword() ?? '';
+
+		late final HeadlessInAppWebView headless;
+		bool injected = false;
+
+		headless = HeadlessInAppWebView(
+			initialUrlRequest: URLRequest(url: WebUri(_loginUrl)),
+			onLoadStop: (controller, uri) async {
+				final url = uri?.toString() ?? '';
+
+				if (!injected && url.contains('/oauth2/login')) {
+					injected = true;
+					await controller.evaluateJavascript(source: """
+					(function tryFill() {
+						const u   = document.querySelector('.login-input');
+						const p   = document.querySelector('.password-input');
+						const btn = document.getElementById('register-button') 
+									|| document.querySelector('button.submit-btn');
+						if (u && p && btn) {
+							u.value = ${jsonEncode(login)};
+							p.value = ${jsonEncode(password)};
+							btn.click();
+						} else {
+							setTimeout(tryFill, 500);
+						}
+					})();
+					""");
+				}
+
+				if (url.startsWith(_successUrlPrefix)) {
+					await controller.evaluateJavascript(source: """
+					(function tryClickTokenLink() {
+						const link = document.querySelector('a[href="$_targetTokenPath"]');
+						if (link) {
+							link.click();
+						} else {
+							setTimeout(tryClickTokenLink, 500);
+						}
+					})();
+					""");
+				}
+			},
+			shouldInterceptRequest: (controller, req) async {
+				final requestUrl = req.url.toString();
+				if (requestUrl.contains(_apiWordEndpoint)) {
+					final auth = req.headers?['Authorization'];
+					if (auth != null && auth.startsWith('Bearer ')) {
+						final token = auth.substring(7);
+						if (!completer.isCompleted) {
+							completer.complete(token);
+						}
+						await headless.dispose();
+					}
+				}
+				return null;
+			},
+				onConsoleMessage: (_, msg) {
+				debugPrint('WebView console: ${msg.message}');
+			},
+		);
+
+		await headless.run();
+
+		final token = await completer.future;
+		GlobalVars.bearerToken = token;
+		return token;
+	}
+
 	static Future<List<ExamEvent>> fetchExamSchedules(
 		List<int> selectedWordIds, List<Word> allWords,
 		{

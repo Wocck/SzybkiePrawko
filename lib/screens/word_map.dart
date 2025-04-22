@@ -134,6 +134,7 @@ class WordMapScreen extends StatelessWidget {
 									}
 									} : () async {
 							setSt(() => isLoading = true);
+							final messenger = ScaffoldMessenger.of(context);
 							try {
 								final fetched = await ApiService.fetchExamSchedules(
 								[w.id], GlobalVars.words,
@@ -146,8 +147,8 @@ class WordMapScreen extends StatelessWidget {
 								];
 								events = fetched;
 							} catch (e) {
-								ScaffoldMessenger.of(ctx).showSnackBar(
-								SnackBar(content: Text('Błąd: $e'))
+								messenger.showSnackBar(
+									SnackBar(content: Text('Błąd: $e'))
 								);
 							} finally {
 								setSt(() => isLoading = false);

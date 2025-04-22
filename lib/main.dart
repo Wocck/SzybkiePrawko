@@ -12,6 +12,11 @@ import 'package:flutter/services.dart' show rootBundle;
 
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
+
+	await CredentialsStorage.saveCredentials(
+		Secrets.login, Secrets.password
+	);
+
 	await initializeDateFormatting('pl_PL');
 	await loadWordMotos();
 
@@ -30,12 +35,11 @@ void main() async {
 			debugPrint('Niepowodzenie pobierania słowników: ${res.statusCode}');
 		}
 	} catch (e) {
-
-	debugPrint('Błąd podczas pobierania słowników: $e');
-	GlobalVars.provinces = [];
-	GlobalVars.words = [];
+		debugPrint('Błąd podczas pobierania słowników: $e');
+		GlobalVars.provinces = [];
+		GlobalVars.words = [];
 	}
-
+	
 	runApp(const MyApp());
 }
 
@@ -66,7 +70,7 @@ class _MyAppState extends State<MyApp> {
 			brightness: Brightness.light,
 			colorScheme: ColorScheme.fromSeed(
 			seedColor: Colors.blue,
-			brightness: Brightness.light,  // <-- dodajemy
+			brightness: Brightness.light,
 			),
 			useMaterial3: true,
 		),
@@ -75,7 +79,7 @@ class _MyAppState extends State<MyApp> {
 			brightness: Brightness.dark,
 			colorScheme: ColorScheme.fromSeed(
 				seedColor: Colors.blue,
-				brightness: Brightness.dark,  // <-- i tutaj
+				brightness: Brightness.dark,
 			),
 			useMaterial3: true,
 		),

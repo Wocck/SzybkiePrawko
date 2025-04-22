@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'login_webview.dart';
 import '../models.dart';
 import '../global.dart';
 import 'dart:async';
@@ -32,6 +30,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 	bool _useTimeFilter = false;
 	TimeOfDay _startTime = const TimeOfDay(hour: 5, minute: 0);
 	TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
+	
 
 
 	void _showProvincesDialog() async {
@@ -282,49 +281,43 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 					Row(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
-						if (!GlobalVars.sessionActive)
-							ElevatedButton(
-								onPressed: () async {
-								await Navigator.push<String>(
-									context,
-									MaterialPageRoute(builder: (_) => const LoginWebView()),
-								);
-								await _checkSession(); 
-								ScaffoldMessenger.of(context).showSnackBar(
-									const SnackBar(content: Text('Zalogowano pomyślnie')),
-								);
-								},
-								child: const Text('Login'),
-							),
-							const SizedBox(width: 10),
-						
-
-						
-					// Przycisk Start: wyłączony, gdy brak sesji, trwa ładowanie lub >4 ośrodki
 					ElevatedButton(
 						onPressed: (!GlobalVars.sessionActive || _isLoading || exceedMax)
 							? null
 							: () async {
-								setState(() => _isLoading = true);
-								try {
+									final messenger = ScaffoldMessenger.of(context);
+									setState(() => _isLoading = true);
+									final failed = <String>[];
+									try {
 									final events = await ApiService.fetchExamSchedules(
-									GlobalVars.selectedWordIds,
-									allWords,
-									useTimeFilter: _useTimeFilter,
-									startTime: _useTimeFilter ? _startTime : null,
-									endTime:   _useTimeFilter ? _endTime   : null,
-									onError: (wordName) {
-									ScaffoldMessenger.of(context).showSnackBar(
-									SnackBar(
-										content: Text('Nie udało się pobrać terminów dla: $wordName'),
-										backgroundColor: Colors.redAccent,
-									),
-									);
-								},
+										GlobalVars.selectedWordIds,
+										allWords,
+										useTimeFilter: _useTimeFilter,
+										startTime: _useTimeFilter ? _startTime : null,
+										endTime: _useTimeFilter ? _endTime   : null,
+										onError: (wordName) {
+											failed.add(wordName);
+										},
 									);
 									GlobalVars.examEvents = events;
+
+									if (failed.isEmpty) {
+										if (!mounted) return;
+										messenger.showSnackBar(
+											const SnackBar(content: Text('Pobrano terminy dla wszystkich ośrodków ✅')),
+										);
+									} else {
+										if (!mounted) return;
+										messenger.showSnackBar(
+											SnackBar(content: Text('Nie udało się pobrać terminów dla: ${failed.join(', ')}')),
+										);
+									}
 								} catch (e) {
-									debugPrint("$e");
+									debugPrint('$e');
+									if (!mounted) return;
+									messenger.showSnackBar(
+									SnackBar(content: Text('Błąd przy pobieraniu terminów: $e')),
+									);
 								} finally {
 									setState(() => _isLoading = false);
 								}
@@ -422,9 +415,11 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		setState(() => GlobalVars.sessionActive = isActive);
 
 		if (!isActive && mounted) {
-			ScaffoldMessenger.of(context).showSnackBar(
-				const SnackBar(content: Text('Sesja wygasła, zaloguj się ponownie')),
-			);
+			final token = await ApiService.loginHeadless();
+			if (token.isNotEmpty) {
+				debugPrint('Logged in, token=$token');
+				await _checkSession();
+			}
 		}
 	}
 	
@@ -432,6 +427,23 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 	@override
 	void initState() {
 		super.initState();
+		_initLoginAndSession();
+	}
+
+	Future<void> _initLoginAndSession() async {
+		try {
+			final token = await ApiService.loginHeadless();
+			setState(() {
+				GlobalVars.sessionActive = true;
+			});
+			debugPrint('Logged in, token=$token');
+		} catch (e) {
+			setState(() {
+				GlobalVars.sessionActive = false;
+			});
+			debugPrint('Headless login failed: $e');
+		}
+
 		_sessionTimer = Timer.periodic(const Duration(minutes: 2), (_) => _checkSession());
 	}
 
