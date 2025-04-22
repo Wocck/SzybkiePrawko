@@ -1,3 +1,5 @@
+import 'package:latlong2/latlong.dart';
+
 import 'models.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -9,6 +11,8 @@ class GlobalVars {
 	static List<int> selectedWordIds = [];
 	static bool sessionActive = false;
 	static List<WordMoto> wordMotos = [];
+	static LatLng? lastMapCenter;
+	static double? lastMapZoom;
 
 	static final maxWords = 4;
 }

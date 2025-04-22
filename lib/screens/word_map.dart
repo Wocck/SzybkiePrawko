@@ -7,16 +7,39 @@ import 'package:intl/intl.dart';
 import 'package:szybkie_prawko/services/api_service.dart';
 import 'package:flutter/services.dart';
 
-class WordMapScreen extends StatelessWidget {
+class WordMapScreen extends StatefulWidget {
 	const WordMapScreen({super.key});
 
 	static final LatLngBounds polandBounds = LatLngBounds(
-		LatLng(49.0, 14.0),
-		LatLng(55.0, 24.5),
+		LatLng(48.0, 13.0),
+		LatLng(55.4, 25.0),
 	);
 
 	@override
+	State<WordMapScreen> createState() => _WordMapScreenState();
+
+}
+
+class _WordMapScreenState extends State<WordMapScreen> {
+	final MapController _mapController = MapController();
+
+	@override
+	void initState() {
+		super.initState();
+
+		_mapController.mapEventStream.listen((event) {
+			if (event is MapEventMove || event is MapEventMoveEnd) {
+				GlobalVars.lastMapCenter = event.camera.center;
+				GlobalVars.lastMapZoom = event.camera.zoom;
+			}
+		});
+	}
+
+	@override
 	Widget build(BuildContext context) {
+		final center = GlobalVars.lastMapCenter ?? WordMapScreen.polandBounds.center;
+		final zoom = GlobalVars.lastMapZoom ?? 8.0;
+
 		final size = MediaQuery.of(context).size;
 		final horizontalMargin = size.width * 0.05;
 		final verticalMargin   = size.height * 0.05;
@@ -28,8 +51,6 @@ class WordMapScreen extends StatelessWidget {
 		return const Center(child: Text('Brak zaznaczonych ośrodków'));
 		}
 
-		final center = polandBounds.center;
-
 		return Padding (
 			padding: EdgeInsets.fromLTRB(
 				horizontalMargin,
@@ -38,10 +59,12 @@ class WordMapScreen extends StatelessWidget {
 				verticalMargin,
 			),
 			child: FlutterMap(
+				mapController: _mapController, 
 				options: MapOptions(
 				initialCenter: center,
-				initialZoom: 10,
-				cameraConstraint: CameraConstraint.contain(bounds: polandBounds),
+				initialZoom: zoom,
+				keepAlive: true,
+				cameraConstraint: CameraConstraint.contain(bounds: WordMapScreen.polandBounds),
 			),
 			children: [
 				TileLayer(
