@@ -363,16 +363,36 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 				),
 			
 			Positioned(
-			bottom: 16,
-			right: 16,
-			child: Container(
-				width: 12,
-				height: 12,
-				decoration: BoxDecoration(
-				shape: BoxShape.circle,
-				color: GlobalVars.sessionActive ? Colors.green : Colors.red,
+				bottom: 16,
+				right: 16,
+				child: Row(
+					mainAxisSize: MainAxisSize.min,
+					children: [
+						Container(
+							width: 12,
+							height: 12,
+							decoration: BoxDecoration(
+							shape: BoxShape.circle,
+							color: GlobalVars.sessionActive ? Colors.green : Colors.red,
+							),
+						),
+
+						const SizedBox(width: 8),
+						if (!GlobalVars.sessionActive)
+							IconButton(
+							iconSize: 20,
+							tooltip: 'Odśwież sesję',
+							icon: _isLoading
+								? SizedBox(
+									width: 16,
+									height: 16,
+									child: CircularProgressIndicator(strokeWidth: 2),
+									)
+								: const Icon(Icons.refresh),
+							onPressed: _isLoading ? null : _initLoginAndSession,
+							),
+					],
 				),
-			),
 			),
 		],
 		),
