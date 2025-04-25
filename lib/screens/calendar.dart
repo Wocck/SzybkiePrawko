@@ -123,7 +123,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
 	final monthYear = DateFormat.yMMMM('pl_PL').format(_focusedMonth);
 
 	return Scaffold(
-		appBar: AppBar(title: const Text('Kalendarz terminów')),
+		appBar: AppBar(
+			title: Center(
+				child: const Text('Kalendarz terminów')
+			),
+		),
 		body: Column(
 		children: [
 			Padding(

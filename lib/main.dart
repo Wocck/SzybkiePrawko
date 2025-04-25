@@ -110,7 +110,7 @@ class _PageContainerState extends State<PageContainer> {
 	Widget build(BuildContext context) {
 	return Scaffold(
 		appBar: AppBar(
-		title: const Text('Szybki egzamin'),
+		title: const Text('Wyszukaj egzamin'),
 		actions: [
 			IconButton(
 			icon: Icon(
@@ -150,4 +150,8 @@ Future<void> loadWordMotos() async {
 		.map((e) => WordMoto.fromJson(e as Map<String, dynamic>))
 		.toList();
 	GlobalVars.wordMotos = motos;
+
+	GlobalVars.distinctMotoModels = motos
+		.map((moto) => moto.motoModel)
+		.toSet();
 }

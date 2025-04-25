@@ -44,7 +44,6 @@ class ApiService {
 		GlobalVars.sessionActive = isActive;
 
 		if (!isActive) {
-			debugPrint('Sesja wygasła, logowanie ponowne...');
 			final newToken = await ApiService.loginHeadless();
 			GlobalVars.sessionActive = newToken.isNotEmpty;
 			return;
@@ -70,12 +69,10 @@ class ApiService {
 					.map((j) => Word.fromJson(j as Map<String, dynamic>))
 					.toList();
 			} else {
-				debugPrint('Niepowodzenie pobierania słowników: ${res.statusCode}');
 				GlobalVars.provinces = [];
 				GlobalVars.words = [];
 			}
 		} catch (e) {
-			debugPrint('Błąd podczas pobierania słowników: $e');
 			GlobalVars.provinces = [];
 			GlobalVars.words = [];
 		}
@@ -142,7 +139,6 @@ class ApiService {
 				return null;
 			},
 				onConsoleMessage: (_, msg) {
-				debugPrint('WebView console: ${msg.message}');
 			},
 		);
 

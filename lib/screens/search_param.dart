@@ -200,7 +200,11 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		final exceedMax = GlobalVars.selectedWordIds.length > GlobalVars.maxWords;
 		
 	return Scaffold(
-		appBar: AppBar(title: const Text('Ustawienia wyszukiwania')),
+		appBar: AppBar(
+			title: Center(
+				child: const Text('Wyszukiwanie')
+			),
+		),
 		body: Stack(
 		children: [
 			Center(
@@ -318,7 +322,6 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 										);
 									}
 								} catch (e) {
-									debugPrint('$e');
 									if (!mounted) return;
 									messenger.showSnackBar(
 									SnackBar(content: Text('Błąd przy pobieraniu terminów: $e')),
@@ -407,16 +410,14 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 
 	Future<void> _initLoginAndSession() async {
 		try {
-			final token = await ApiService.loginHeadless();
+			await ApiService.loginHeadless();
 			setState(() {
 				GlobalVars.sessionActive = true;
 			});
-			debugPrint('Logged in, token=$token');
 		} catch (e) {
 			setState(() {
 				GlobalVars.sessionActive = false;
 			});
-			debugPrint('Headless login failed: $e');
 		}
 
 		_sessionTimer = Timer.periodic(const Duration(seconds: 30), (_) => ApiService.checkSession());

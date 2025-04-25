@@ -51,18 +51,18 @@ class ExamEvent {
 
 class WordMoto {
 	final int wordId;
-	final String word;
-	final String moto;
+	final String wordName;
+	final String motoModel;
 
 	WordMoto({
 		required this.wordId,
-		required this.word,
-		required this.moto
+		required this.wordName,
+		required this.motoModel
 	});
 
 	factory WordMoto.fromJson(Map<String, dynamic> j) => WordMoto(
 		wordId:int.tryParse(j['ID']) as int,
-		word: j['WORD'] as String,
-		moto: j['MOTO'] as String,
+		wordName: j['WORD'] as String,
+		motoModel: j['MOTO'] as String,
 	);
 }

@@ -43,7 +43,6 @@ class _LoginWebViewState extends State<LoginWebView> {
 					final token = authorizationHeader.substring(7);
 					GlobalVars.bearerToken = token;
 					Navigator.pop(context, token);
-					debugPrint(token);
 				}
 				}
 			}

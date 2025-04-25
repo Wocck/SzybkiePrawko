@@ -11,6 +11,7 @@ class GlobalVars {
 	static List<int> selectedWordIds = [];
 	static bool sessionActive = false;
 	static List<WordMoto> wordMotos = [];
+	static Set<String> distinctMotoModels = {};
 	static LatLng? lastMapCenter;
 	static double? lastMapZoom;
 

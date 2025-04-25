@@ -11,8 +11,8 @@ class WordMapScreen extends StatefulWidget {
 	const WordMapScreen({super.key});
 
 	static final LatLngBounds polandBounds = LatLngBounds(
-		LatLng(48.0, 13.0),
-		LatLng(55.4, 25.0),
+		LatLng(47.5, 13.4),
+		LatLng(56.4, 26.0),
 	);
 
 	@override
@@ -22,11 +22,13 @@ class WordMapScreen extends StatefulWidget {
 
 class _WordMapScreenState extends State<WordMapScreen> {
 	final MapController _mapController = MapController();
+	Set<String> _selectedMotos = {};
+
 
 	@override
 	void initState() {
 		super.initState();
-
+		_selectedMotos = GlobalVars.distinctMotoModels.toSet();
 		_mapController.mapEventStream.listen((event) {
 			if (event is MapEventMove || event is MapEventMoveEnd) {
 				GlobalVars.lastMapCenter = event.camera.center;
@@ -44,62 +46,159 @@ class _WordMapScreenState extends State<WordMapScreen> {
 		final horizontalMargin = size.width * 0.05;
 		final verticalMargin   = size.height * 0.05;
 
-		final selected = GlobalVars.words
+		final selectedWords = GlobalVars.words
 			.where((w) => GlobalVars.selectedWordIds.contains(w.id))
 			.toList();
-		if (selected.isEmpty) {
-		return const Center(child: Text('Brak zaznaczonych ośrodków'));
+		if (selectedWords.isEmpty) {
+			return const Center(child: Text('Brak zaznaczonych ośrodków'));
 		}
 
-		return Padding (
-			padding: EdgeInsets.fromLTRB(
-				horizontalMargin,
-				verticalMargin,
-				horizontalMargin,
-				verticalMargin,
-			),
-			child: FlutterMap(
-				mapController: _mapController, 
-				options: MapOptions(
-				initialCenter: center,
-				initialZoom: zoom,
-				keepAlive: true,
-				cameraConstraint: CameraConstraint.contain(bounds: WordMapScreen.polandBounds),
-			),
-			children: [
-				TileLayer(
-				urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-				subdomains: const ['a','b','c'],
-				userAgentPackageName: 'dev.yourapp.package',
-				),
-				MarkerLayer(
-				markers: selected.map((w) {
-					return Marker(
-					point: LatLng(w.latitude, w.longitude),
-					width: 40,
-					height: 40,
-					child: GestureDetector(
-						onTap: () {
-						_openWordSheet(context, w);
-						},
-						child: const Icon(
-						Icons.location_on,
-						color: Colors.red,
-						size: 32,
-						),
+		final filtered = selectedWords.where((w) {
+			final moto = GlobalVars.wordMotos
+				.firstWhere((m) => m.wordId == w.id,
+				orElse: () => WordMoto(wordId: w.id, wordName: w.name, motoModel: '-'))
+				.motoModel;
+			return _selectedMotos.contains(moto);
+		}).toList();
+
+		setState(() {});
+
+		return Scaffold(
+			appBar: _buildAppBar(),
+			body: filtered.isEmpty
+				? const Center(child: Text('Brak ośrodków dla wybranych modeli'))
+				: Padding(
+					padding: EdgeInsets.fromLTRB(
+						horizontalMargin,
+						verticalMargin,
+						horizontalMargin,
+						verticalMargin,
 					),
-					);
-				}).toList(),
+
+					child: FlutterMap(
+						mapController: _mapController,
+						options: MapOptions(
+							initialCenter: center,
+							initialZoom: zoom,
+							keepAlive: true,
+							cameraConstraint: CameraConstraint.contain(bounds: WordMapScreen.polandBounds),
+						),
+						children: [
+							TileLayer(
+								urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+								subdomains: const ['a', 'b', 'c'],
+								userAgentPackageName: 'dev.yourapp.package',
+							),
+							MarkerLayer(
+							markers: filtered.map((w) {
+								return Marker(
+									point: LatLng(w.latitude, w.longitude),
+									width: 40,
+									height: 40,
+									child: GestureDetector(
+										onTap: () {
+											_openWordSheet(context, w);
+										},
+										child: const Icon(
+											Icons.location_on,
+											color: Colors.red,
+											size: 32,
+										),
+									),
+								);
+							}).toList(),
+							),
+						],
+					),
 				),
-			],
+		);
+	}
+
+	AppBar _buildAppBar() {
+		return AppBar(
+		title: Center(
+			child: const Text('Mapa ośrodków')
+		),
+		actions: [
+			IconButton(
+				icon: const Icon(Icons.filter_list),
+				tooltip: 'Filtruj po modelach',
+				onPressed: _openMotoFilterDialog,
+			),
+		],
+		);
+	}
+
+	void _openMotoFilterDialog() async {
+		final temp = Set<String>.from(_selectedMotos);
+		await showDialog(
+			context: context,
+			builder: (_) => StatefulBuilder(
+			builder: (ctx, setD) => AlertDialog(
+				title: const Text('Wybierz modele motocykli'),
+				content: SizedBox(
+				height: MediaQuery.of(context).size.height * 0.6,
+				width: MediaQuery.of(context).size.width * 0.8,
+				child: Wrap(
+					spacing: 8.0,
+					runSpacing: 8.0,
+					children: [
+						ChoiceChip(
+							label: const Text('Wszystkie'),
+							selected: temp.length == GlobalVars.distinctMotoModels.length,
+							onSelected: (bool selected) {
+							setD(() {
+								temp.clear();
+								if (selected) {
+								temp.addAll(GlobalVars.distinctMotoModels);
+								}
+							});
+							},
+						),
+						const Divider(),
+						...GlobalVars.distinctMotoModels.map((model) {
+							return ChoiceChip(
+							label: Text(model),
+							selected: temp.contains(model),
+							onSelected: (bool selected) {
+								setD(() {
+								if (selected) {
+									temp.add(model);
+								} else {
+									temp.remove(model);
+								}
+								});
+							},
+							);
+						}),
+					],
+				),
+				),
+				actions: [
+				TextButton(
+					onPressed: () => Navigator.pop(ctx),
+					child: const Text('Anuluj'),
+				),
+				TextButton(
+					onPressed: () {
+						setState(() {
+							_selectedMotos = temp;
+						});
+						Navigator.pop(ctx);
+					},
+					child: const Text('Zatwierdź'),
+				),
+				],
+			),
 			),
 		);
 	}
 
+
 	void _openWordSheet(BuildContext context, Word w) {
 		final motoEntry = GlobalVars.wordMotos.firstWhere(
 			(m) => m.wordId == w.id,
-			orElse: () => WordMoto(wordId: w.id, moto: '-', word: '-'),
+			orElse: () => WordMoto(wordId: w.id, motoModel: '-', wordName: '-'),
 		);
 
 		showModalBottomSheet(
@@ -124,7 +223,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
 					Text(
-						'${w.name} —> ${motoEntry.moto}',
+						'${w.name} —> ${motoEntry.motoModel}',
 						style: const TextStyle(
 							fontSize: 18, fontWeight: FontWeight.bold
 						),
