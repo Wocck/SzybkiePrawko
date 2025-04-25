@@ -1,442 +1,442 @@
 [
-    {
-        "ID": "1",
-        "WORD": "DORD Legnica",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "2",
-        "WORD": "DORD Jelenia Góra",
-        "MOTO": "-"
-    },
-    {
-        "ID": "3",
-        "WORD": "WORD Wrocław",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "4",
-        "WORD": "WORD Wałbrzych",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "5",
-        "WORD": "WORD Wałbrzych /O Kłodzko",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "6",
-        "WORD": "WORD Włocławek",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "7",
-        "WORD": "WORD Toruń",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "8",
-        "WORD": "WORD Bydgoszcz",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "9",
-        "WORD": "WORD Toruń /O Grudziądz",
-        "MOTO": "-"
-    },
-    {
-        "ID": "10",
-        "WORD": "WORD Biała Podlaska",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "11",
-        "WORD": "WORD Lublin",
-        "MOTO": "Suzuki SV 650"
-    },
-    {
-        "ID": "12",
-        "WORD": "WORD Chełm",
-        "MOTO": "SUZUKI GSX 8S"
-    },
-    {
-        "ID": "13",
-        "WORD": "WORD Zamość",
-        "MOTO": "SUZUKI SFV 650 A"
-    },
-    {
-        "ID": "14",
-        "WORD": "WORD Gorzów Wlkp",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "15",
-        "WORD": "WORD Zielona Góra",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "16",
-        "WORD": "WORD Łódź",
-        "MOTO": "Yamaha MT-07\n"
-    },
-    {
-        "ID": "18",
-        "WORD": "WORD Łódź O/T Sieradz",
-        "MOTO": "Kawasaki Z650"
-    },
-    {
-        "ID": "19",
-        "WORD": "WORD Łódź O/T Skierniewice",
-        "MOTO": "Kawasaki Z650"
-    },
-    {
-        "ID": "20",
-        "WORD": "WORD Łódź O/T Piotrków Trybunalski",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "21",
-        "WORD": "MORD Kraków",
-        "MOTO": "Yamaha MT-07\n"
-    },
-    {
-        "ID": "22",
-        "WORD": "MORD Kraków/O Kraków",
-        "MOTO": "Yamaha MT-07\n"
-    },
-    {
-        "ID": "23",
-        "WORD": "MORD Tarnów",
-        "MOTO": "Kawasaki Z650"
-    },
-    {
-        "ID": "24",
-        "WORD": "MORD Nowy Sącz",
-        "MOTO": "Kawasaki Z650"
-    },
-    {
-        "ID": "25",
-        "WORD": "WORD Warszawa M/E Odlewnicza",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "26",
-        "WORD": "WORD Warszawa M/E Bemowo",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "28",
-        "WORD": "WORD Ostrołęka",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "29",
-        "WORD": "WORD Ciechanów",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "30",
-        "WORD": "WORD Płock",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "31",
-        "WORD": "WORD Siedlce",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "32",
-        "WORD": "WORD Radom",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "33",
-        "WORD": "WORD Opole",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "34",
-        "WORD": "WORD Tarnobrzeg",
-        "MOTO": "Kawasaki Z650"
-    },
-    {
-        "ID": "35",
-        "WORD": "WORD Rzeszów",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "36",
-        "WORD": "WORD Krosno",
-        "MOTO": "Honda CB 650R"
-    },
-    {
-        "ID": "37",
-        "WORD": "WORD Przemyśl",
-        "MOTO": "Kawasaki ER-6N"
-    },
-    {
-        "ID": "38",
-        "WORD": "WORD Białystok",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "40",
-        "WORD": "WORD Suwałki",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "41",
-        "WORD": "WORD Słupsk",
-        "MOTO": "Kawasaki ER-6N"
-    },
-    {
-        "ID": "42",
-        "WORD": "PORD Gdańsk O/Gdynia",
-        "MOTO": "Honda CB 650R"
-    },
-    {
-        "ID": "43",
-        "WORD": "PORD Gdańsk",
-        "MOTO": "Honda CB 650R"
-    },
-    {
-        "ID": "44",
-        "WORD": "WORD Częstochowa",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "45",
-        "WORD": "WORD Katowice",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "46",
-        "WORD": "WORD Katowice O/T Dąbrowa Górnicza",
-        "MOTO": "-"
-    },
-    {
-        "ID": "47",
-        "WORD": "WORD Katowice O/T Tychy",
-        "MOTO": "-"
-    },
-    {
-        "ID": "48",
-        "WORD": "WORD Katowice O/T Jastrzębie Zdrój",
-        "MOTO": "-"
-    },
-    {
-        "ID": "49",
-        "WORD": "WORD Katowice O/T Rybnik",
-        "MOTO": "-"
-    },
-    {
-        "ID": "50",
-        "WORD": "WORD Katowice O/T Bytom",
-        "MOTO": "-"
-    },
-    {
-        "ID": "51",
-        "WORD": "WORD Bielsko-Biała",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "52",
-        "WORD": "WORD Kielce",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "53",
-        "WORD": "WORD Elbląg",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "54",
-        "WORD": "WORD - RCBRD Olsztyn",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "55",
-        "WORD": "WORD Kalisz",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "56",
-        "WORD": "WORD Konin",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "57",
-        "WORD": "WORD Leszno",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "58",
-        "WORD": "WORD Poznań",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "59",
-        "WORD": "WORD Piła",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "60",
-        "WORD": "WORD Szczecin",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "61",
-        "WORD": "ZORD Koszalin",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "62",
-        "WORD": "WORD Kielce O/ Ostrowiec Świętokrzyski",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "63",
-        "WORD": "WORD Wałbrzych O/ Świdnica",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "64",
-        "WORD": "MORD Kraków/O Oświęcim",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "65",
-        "WORD": "WORD Biała Podlaska O/ Łuków",
-        "MOTO": "-"
-    },
-    {
-        "ID": "66",
-        "WORD": "WORD Lublin O/ Puławy",
-        "MOTO": "Suzuki SV 650"
-    },
-    {
-        "ID": "67",
-        "WORD": "WORD Opole O/ Kędzierzyn Koźle",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "68",
-        "WORD": "WORD Jelenia Góra O/ Głogów",
-        "MOTO": "-"
-    },
-    {
-        "ID": "69",
-        "WORD": "WORD Nowy Sącz O/ Nowy Targ",
-        "MOTO": "-"
-    },
-    {
-        "ID": "70",
-        "WORD": "WORD Zamość OT w Biłgoraju",
-        "MOTO": "-"
-    },
-    {
-        "ID": "71",
-        "WORD": "WORD Opole OT w Nysie",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "72",
-        "WORD": "WORD Jelenia Góra OT Milicz",
-        "MOTO": "-"
-    },
-    {
-        "ID": "73",
-        "WORD": "PORD Gdańsk O/Chojnice",
-        "MOTO": "-"
-    },
-    {
-        "ID": "74",
-        "WORD": "WORD Częstochowa O/T Zawiercie",
-        "MOTO": "Suzuki SV 650"
-    },
-    {
-        "ID": "1001",
-        "WORD": "DORD Legnica / del Lubin",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "1002",
-        "WORD": "DORD Legnica del. Lubań",
-        "MOTO": "Suzuki Gladius SFV650A"
-    },
-    {
-        "ID": "2001",
-        "WORD": "WORD Jelenia Góra / del Bolesławiec",
-        "MOTO": "-"
-    },
-    {
-        "ID": "3001",
-        "WORD": "DORD Wrocław  del Oława",
-        "MOTO": "-"
-    },
-    {
-        "ID": "3002",
-        "WORD": "DORD Wrocław  del Oleśnica",
-        "MOTO": "-"
-    },
-    {
-        "ID": "8001",
-        "WORD": "WORD Bydgoszcz / del Inowrocław",
-        "MOTO": "-"
-    },
-    {
-        "ID": "11001",
-        "WORD": "WORD Lublin / del Kraśnik",
-        "MOTO": "-"
-    },
-    {
-        "ID": "19001",
-        "WORD": "WORD Skierniewice del. Kutno",
-        "MOTO": "-"
-    },
-    {
-        "ID": "29001",
-        "WORD": "WORD Ciechanów / del Mława",
-        "MOTO": "-"
-    },
-    {
-        "ID": "30001",
-        "WORD": "WORD Płock O/ Sochaczew",
-        "MOTO": "-"
-    },
-    {
-        "ID": "31001",
-        "WORD": "WORD Siedlce / del Garwolin",
-        "MOTO": "Yamaha MT-07"
-    },
-    {
-        "ID": "32001",
-        "WORD": "WORD Radom / del Radomskiego (Radom)",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "32003",
-        "WORD": "WORD Radom / del Kozienice",
-        "MOTO": "Yamaha XJ6"
-    },
-    {
-        "ID": "32004",
-        "WORD": "WORD Radom / del Grójec",
-        "MOTO": "-"
-    },
-    {
-        "ID": "38001",
-        "WORD": "WORD Białystok del / Bielsk Podlaski",
-        "MOTO": "-"
-    },
-    {
-        "ID": "60001",
-        "WORD": "WORD Szczecin/ del Barlinek",
-        "MOTO": "-"
-    },
-    {
-        "ID": "61001",
-        "WORD": "ZORD Koszalin / del Szczecinek",
-        "MOTO": "-"
-    }
+	{
+		"ID": "1",
+		"WORD": "DORD Legnica",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "2",
+		"WORD": "DORD Jelenia Góra",
+		"MOTO": "-"
+	},
+	{
+		"ID": "3",
+		"WORD": "WORD Wrocław",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "4",
+		"WORD": "WORD Wałbrzych",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "5",
+		"WORD": "WORD Wałbrzych /O Kłodzko",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "6",
+		"WORD": "WORD Włocławek",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "7",
+		"WORD": "WORD Toruń",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "8",
+		"WORD": "WORD Bydgoszcz",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "9",
+		"WORD": "WORD Toruń /O Grudziądz",
+		"MOTO": "-"
+	},
+	{
+		"ID": "10",
+		"WORD": "WORD Biała Podlaska",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "11",
+		"WORD": "WORD Lublin",
+		"MOTO": "Suzuki SV650"
+	},
+	{
+		"ID": "12",
+		"WORD": "WORD Chełm",
+		"MOTO": "Suzuki GSX 8S"
+	},
+	{
+		"ID": "13",
+		"WORD": "WORD Zamość",
+		"MOTO": "Suzuki SV650"
+	},
+	{
+		"ID": "14",
+		"WORD": "WORD Gorzów Wlkp",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "15",
+		"WORD": "WORD Zielona Góra",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "16",
+		"WORD": "WORD Łódź",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "18",
+		"WORD": "WORD Łódź O/T Sieradz",
+		"MOTO": "Kawasaki Z650"
+	},
+	{
+		"ID": "19",
+		"WORD": "WORD Łódź O/T Skierniewice",
+		"MOTO": "Kawasaki Z650"
+	},
+	{
+		"ID": "20",
+		"WORD": "WORD Łódź O/T Piotrków Trybunalski",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "21",
+		"WORD": "MORD Kraków",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "22",
+		"WORD": "MORD Kraków/O Kraków",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "23",
+		"WORD": "MORD Tarnów",
+		"MOTO": "Kawasaki Z650"
+	},
+	{
+		"ID": "24",
+		"WORD": "MORD Nowy Sącz",
+		"MOTO": "Kawasaki Z650"
+	},
+	{
+		"ID": "25",
+		"WORD": "WORD Warszawa M/E Odlewnicza",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "26",
+		"WORD": "WORD Warszawa M/E Bemowo",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "28",
+		"WORD": "WORD Ostrołęka",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "29",
+		"WORD": "WORD Ciechanów",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "30",
+		"WORD": "WORD Płock",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "31",
+		"WORD": "WORD Siedlce",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "32",
+		"WORD": "WORD Radom",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "33",
+		"WORD": "WORD Opole",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "34",
+		"WORD": "WORD Tarnobrzeg",
+		"MOTO": "Kawasaki Z650"
+	},
+	{
+		"ID": "35",
+		"WORD": "WORD Rzeszów",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "36",
+		"WORD": "WORD Krosno",
+		"MOTO": "Honda CB 650R"
+	},
+	{
+		"ID": "37",
+		"WORD": "WORD Przemyśl",
+		"MOTO": "Kawasaki ER-6N"
+	},
+	{
+		"ID": "38",
+		"WORD": "WORD Białystok",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "40",
+		"WORD": "WORD Suwałki",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "41",
+		"WORD": "WORD Słupsk",
+		"MOTO": "Kawasaki ER-6N"
+	},
+	{
+		"ID": "42",
+		"WORD": "PORD Gdańsk O/Gdynia",
+		"MOTO": "Honda CB 650R"
+	},
+	{
+		"ID": "43",
+		"WORD": "PORD Gdańsk",
+		"MOTO": "Honda CB 650R"
+	},
+	{
+		"ID": "44",
+		"WORD": "WORD Częstochowa",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "45",
+		"WORD": "WORD Katowice",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "46",
+		"WORD": "WORD Katowice O/T Dąbrowa Górnicza",
+		"MOTO": "-"
+	},
+	{
+		"ID": "47",
+		"WORD": "WORD Katowice O/T Tychy",
+		"MOTO": "-"
+	},
+	{
+		"ID": "48",
+		"WORD": "WORD Katowice O/T Jastrzębie Zdrój",
+		"MOTO": "-"
+	},
+	{
+		"ID": "49",
+		"WORD": "WORD Katowice O/T Rybnik",
+		"MOTO": "-"
+	},
+	{
+		"ID": "50",
+		"WORD": "WORD Katowice O/T Bytom",
+		"MOTO": "-"
+	},
+	{
+		"ID": "51",
+		"WORD": "WORD Bielsko-Biała",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "52",
+		"WORD": "WORD Kielce",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "53",
+		"WORD": "WORD Elbląg",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "54",
+		"WORD": "WORD - RCBRD Olsztyn",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "55",
+		"WORD": "WORD Kalisz",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "56",
+		"WORD": "WORD Konin",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "57",
+		"WORD": "WORD Leszno",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "58",
+		"WORD": "WORD Poznań",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "59",
+		"WORD": "WORD Piła",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "60",
+		"WORD": "WORD Szczecin",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "61",
+		"WORD": "ZORD Koszalin",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "62",
+		"WORD": "WORD Kielce O/ Ostrowiec Świętokrzyski",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "63",
+		"WORD": "WORD Wałbrzych O/ Świdnica",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "64",
+		"WORD": "MORD Kraków/O Oświęcim",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "65",
+		"WORD": "WORD Biała Podlaska O/ Łuków",
+		"MOTO": "-"
+	},
+	{
+		"ID": "66",
+		"WORD": "WORD Lublin O/ Puławy",
+		"MOTO": "Suzuki SV650"
+	},
+	{
+		"ID": "67",
+		"WORD": "WORD Opole O/ Kędzierzyn Koźle",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "68",
+		"WORD": "WORD Jelenia Góra O/ Głogów",
+		"MOTO": "-"
+	},
+	{
+		"ID": "69",
+		"WORD": "WORD Nowy Sącz O/ Nowy Targ",
+		"MOTO": "-"
+	},
+	{
+		"ID": "70",
+		"WORD": "WORD Zamość OT w Biłgoraju",
+		"MOTO": "-"
+	},
+	{
+		"ID": "71",
+		"WORD": "WORD Opole OT w Nysie",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "72",
+		"WORD": "WORD Jelenia Góra OT Milicz",
+		"MOTO": "-"
+	},
+	{
+		"ID": "73",
+		"WORD": "PORD Gdańsk O/Chojnice",
+		"MOTO": "-"
+	},
+	{
+		"ID": "74",
+		"WORD": "WORD Częstochowa O/T Zawiercie",
+		"MOTO": "Suzuki SV650"
+	},
+	{
+		"ID": "1001",
+		"WORD": "DORD Legnica / del Lubin",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "1002",
+		"WORD": "DORD Legnica del. Lubań",
+		"MOTO": "Suzuki Gladius SFV650A"
+	},
+	{
+		"ID": "2001",
+		"WORD": "WORD Jelenia Góra / del Bolesławiec",
+		"MOTO": "-"
+	},
+	{
+		"ID": "3001",
+		"WORD": "DORD Wrocław  del Oława",
+		"MOTO": "-"
+	},
+	{
+		"ID": "3002",
+		"WORD": "DORD Wrocław  del Oleśnica",
+		"MOTO": "-"
+	},
+	{
+		"ID": "8001",
+		"WORD": "WORD Bydgoszcz / del Inowrocław",
+		"MOTO": "-"
+	},
+	{
+		"ID": "11001",
+		"WORD": "WORD Lublin / del Kraśnik",
+		"MOTO": "-"
+	},
+	{
+		"ID": "19001",
+		"WORD": "WORD Skierniewice del. Kutno",
+		"MOTO": "-"
+	},
+	{
+		"ID": "29001",
+		"WORD": "WORD Ciechanów / del Mława",
+		"MOTO": "-"
+	},
+	{
+		"ID": "30001",
+		"WORD": "WORD Płock O/ Sochaczew",
+		"MOTO": "-"
+	},
+	{
+		"ID": "31001",
+		"WORD": "WORD Siedlce / del Garwolin",
+		"MOTO": "Yamaha MT-07"
+	},
+	{
+		"ID": "32001",
+		"WORD": "WORD Radom / del Radomskiego (Radom)",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "32003",
+		"WORD": "WORD Radom / del Kozienice",
+		"MOTO": "Yamaha XJ6"
+	},
+	{
+		"ID": "32004",
+		"WORD": "WORD Radom / del Grójec",
+		"MOTO": "-"
+	},
+	{
+		"ID": "38001",
+		"WORD": "WORD Białystok del / Bielsk Podlaski",
+		"MOTO": "-"
+	},
+	{
+		"ID": "60001",
+		"WORD": "WORD Szczecin/ del Barlinek",
+		"MOTO": "-"
+	},
+	{
+		"ID": "61001",
+		"WORD": "ZORD Koszalin / del Szczecinek",
+		"MOTO": "-"
+	}
 ]
