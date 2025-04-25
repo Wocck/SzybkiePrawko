@@ -65,7 +65,9 @@ class _WordMapScreenState extends State<WordMapScreen> {
 
 		return Scaffold(
 			appBar: _buildAppBar(),
-			body: filtered.isEmpty
+			body: Stack(
+				children: [
+				filtered.isEmpty
 				? const Center(child: Text('Brak ośrodków dla wybranych modeli'))
 				: Padding(
 					padding: EdgeInsets.fromLTRB(
@@ -111,6 +113,20 @@ class _WordMapScreenState extends State<WordMapScreen> {
 						],
 					),
 				),
+				Positioned(
+					bottom: 16,
+					right: 16,
+					child: Container(
+					width: 12,
+					height: 12,
+					decoration: BoxDecoration(
+						shape: BoxShape.circle,
+						color: GlobalVars.sessionActive ? Colors.green : Colors.red,
+					),
+					),
+				),
+				],
+			),
 		);
 	}
 

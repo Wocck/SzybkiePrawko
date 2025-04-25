@@ -131,45 +131,59 @@ class _CalendarScreenState extends State<CalendarScreen> {
 		body: Column(
 		children: [
 			Padding(
-			padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-			child: Row(
-				mainAxisAlignment: MainAxisAlignment.spaceBetween,
-				children: [
-				IconButton(onPressed: _goToPreviousMonth, icon: const Icon(Icons.arrow_back)),
-				Text(monthYear, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-				IconButton(onPressed: _goToNextMonth, icon: const Icon(Icons.arrow_forward)),
-				],
-			),
+				padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+				child: Row(
+					mainAxisAlignment: MainAxisAlignment.spaceBetween,
+					children: [
+					IconButton(onPressed: _goToPreviousMonth, icon: const Icon(Icons.arrow_back)),
+					Text(monthYear, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+					IconButton(onPressed: _goToNextMonth, icon: const Icon(Icons.arrow_forward)),
+					],
+				),
 			),
 			Padding(
 				padding: const EdgeInsets.symmetric(horizontal: 8),
 				child: Row(
-				children: _weekdays.map((d) => Expanded(
-					child: Center(
-					child: Text(
-						d,
-						style: const TextStyle(fontWeight: FontWeight.bold),
-					),
-					),
-				)).toList(),
+					children: _weekdays.map((d) => Expanded(
+						child: Center(
+						child: Text(
+							d,
+							style: const TextStyle(fontWeight: FontWeight.bold),
+						),
+						),
+					)).toList(),
 				),
 			),
 			Expanded(
-			child: GestureDetector(
-				onHorizontalDragEnd: (details) {
-					if (details.primaryVelocity == null) return;
-					if (details.primaryVelocity! < 0) {
-						_goToNextMonth();
-					} else if (details.primaryVelocity! > 0) {
-						_goToPreviousMonth();
-					}
-				},
-				child: GridView.count(
-					crossAxisCount: 7,
-					physics: const NeverScrollableScrollPhysics(),
-					children: _buildDaysGrid(),
+				child: GestureDetector(
+					onHorizontalDragEnd: (details) {
+						if (details.primaryVelocity == null) return;
+						if (details.primaryVelocity! < 0) {
+							_goToNextMonth();
+						} else if (details.primaryVelocity! > 0) {
+							_goToPreviousMonth();
+						}
+					},
+					child: GridView.count(
+						crossAxisCount: 7,
+						physics: const NeverScrollableScrollPhysics(),
+						children: _buildDaysGrid(),
+					),
 				),
 			),
+			Align(
+				alignment: Alignment.centerRight, 
+				child: Padding(
+				padding: const EdgeInsets.all(16.0), 
+				child: Container(
+					width: 12,
+					height: 12,
+					decoration: BoxDecoration(
+					shape: BoxShape.circle,
+					color: GlobalVars.sessionActive ? Colors.green : Colors.red,
+					),
+				),
+				),
 			),
 		],
 		),
