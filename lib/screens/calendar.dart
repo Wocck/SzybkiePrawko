@@ -100,11 +100,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
 						final e = events[index];
 						final motoEntry = GlobalVars.wordMotos.firstWhere(
 							(m) => m.wordId == e.wordId,
-							orElse: () => WordMoto(wordId: e.wordId, moto: '-', word: '-'),
+							orElse: () => WordMoto(wordId: e.wordId, motoModel: '-', wordName: '-'),
 						);
 						return ListTile(
 							title: Text(e.wordName),
-							subtitle: Text('${DateFormat.Hm('pl_PL').format(e.dateTime)}, ${motoEntry.moto}'),
+							subtitle: Text('${DateFormat.Hm('pl_PL').format(e.dateTime)}, ${motoEntry.motoModel}'),
 							trailing: Text('Miejsc: ${e.places}'), 
 						);
 						},
@@ -151,9 +151,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
 				),
 			),
 			Expanded(
-			child: GridView.count(
-				crossAxisCount: 7,
-				children: _buildDaysGrid(),
+			child: GestureDetector(
+				onHorizontalDragEnd: (details) {
+					if (details.primaryVelocity == null) return;
+					if (details.primaryVelocity! < 0) {
+						_goToNextMonth();
+					} else if (details.primaryVelocity! > 0) {
+						_goToPreviousMonth();
+					}
+				},
+				child: GridView.count(
+					crossAxisCount: 7,
+					physics: const NeverScrollableScrollPhysics(),
+					children: _buildDaysGrid(),
+				),
 			),
 			),
 		],
