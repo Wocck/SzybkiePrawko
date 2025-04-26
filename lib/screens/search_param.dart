@@ -34,66 +34,80 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 	void _showProvincesDialog() async {
 		final temp = List<int>.from(selectedProvinceIds);
 		await showDialog(
-		context: context,
-		builder: (_) => StatefulBuilder(
+			context: context,
+			builder: (_) => StatefulBuilder(
 			builder: (ctx, setD) => AlertDialog(
-			title: const Text('Wybierz województwa'),
+				title: const Text('Wybierz województwa'),
 				content: SingleChildScrollView(
-					child: Column(
+				child: Column(
 					children: [
-						CheckboxListTile(
+					Row(
+						children: [
+						Expanded(
+							child: CheckboxListTile(
 							title: const Text('Zaznacz wszystkie'),
 							value: temp.length == allProvinces.length,
 							onChanged: (v) => setD(() {
 								temp.clear();
 								if (v == true) {
-									temp.addAll(allProvinces.map((p) => p.id));
+								temp.addAll(allProvinces.map((p) => p.id));
 								}
 							}),
+							controlAffinity: ListTileControlAffinity.leading,
+							contentPadding: EdgeInsets.zero,
+							),
 						),
-
-						const Divider(),
-							...allProvinces.map((p) {
-								final sel = temp.contains(p.id);
-								return Padding(
-									padding: const EdgeInsets.symmetric(vertical: 2.0),
-									child: CheckboxListTile(
-										title: Text(p.name),
-										value: sel,
-										onChanged: (v) => setD(() {
-											if (v == true) { 
-												temp.add(p.id);
-											} else {
-												temp.remove(p.id);
-											}
-										}),
-										tileColor: Theme.of(context).colorScheme.surface,
-										selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
-										shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-										controlAffinity: ListTileControlAffinity.leading,
-									),
-								);
-							}),
-					],
+						const SizedBox(width: 8),
+						TextButton(
+							onPressed: () => Navigator.pop(ctx),
+							child: const Text('Anuluj'),
+						),
+						const SizedBox(width: 4),
+						ElevatedButton(
+							onPressed: () {
+							setState(() {
+								selectedProvinceIds = temp;
+								GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
+								final w = allWords.firstWhere((w) => w.id == wId);
+								return selectedProvinceIds.contains(w.provinceId);
+								}).toList();
+							});
+							Navigator.pop(ctx);
+							},
+							child: const Text('Zatwierdź'),
+						),
+						],
 					),
+					const Divider(),
+					...allProvinces.map((p) {
+						final sel = temp.contains(p.id);
+						return Padding(
+						padding: const EdgeInsets.symmetric(vertical: 2.0),
+						child: CheckboxListTile(
+							title: Text(p.name),
+							value: sel,
+							onChanged: (v) => setD(() {
+							if (v == true) {
+								temp.add(p.id);
+							} else {
+								temp.remove(p.id);
+							}
+							}),
+							tileColor: Theme.of(context).colorScheme.surface,
+							selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
+							shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+							controlAffinity: ListTileControlAffinity.leading,
+						),
+						);
+					}),
+					],
+				),
+				),
 			),
-			actions: [
-				TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Anuluj')),
-				TextButton(onPressed: () {
-					setState(() {
-						selectedProvinceIds = temp;
-						GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
-							final w = allWords.firstWhere((w) => w.id == wId);
-							return selectedProvinceIds.contains(w.provinceId);
-						}).toList();
-					});
-					Navigator.pop(ctx);
-				}, child: const Text('Zatwierdź')),
-			],
 			),
-		),
 		);
 	}
+
 
 	void _showWordsDialog() async {
 		final temp = List<int>.from(GlobalVars.selectedWordIds);
@@ -115,80 +129,90 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		});
 
 		await showDialog(
-		context: context,
-		builder: (_) => StatefulBuilder(
+			context: context,
+			builder: (_) => StatefulBuilder(
 			builder: (ctx, setD) => AlertDialog(
-			title: const Text('Wybierz ośrodki'),
-			content: SingleChildScrollView(
+				title: const Text('Wybierz ośrodki'),
+				content: SingleChildScrollView(
 				child: Column(
-				children: [
-					CheckboxListTile(
-					title: const Text('Zaznacz wszystkie'),
-					value: filtered.every((w) => temp.contains(w.id)),
-					onChanged: (v) => setD(() {
-						if (v == true) {
-							temp.addAll(filtered.map((w) => w.id));
-						} else {
-							for (final w in filtered) {
-								temp.remove(w.id);
-							}
-						}
-					}),
-					tileColor: Theme.of(context).colorScheme.surface,
-					selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
-					shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-						controlAffinity: ListTileControlAffinity.leading,
+					children: [
+					Row(
+						children: [
+						Expanded(
+							child: CheckboxListTile(
+							title: const Text('Zaznacz wszystkie'),
+							value: filtered.every((w) => temp.contains(w.id)),
+							onChanged: (v) => setD(() {
+								if (v == true) {
+								temp.addAll(filtered.map((w) => w.id));
+								} else {
+								for (final w in filtered) {
+									temp.remove(w.id);
+								}
+								}
+							}),
+							controlAffinity: ListTileControlAffinity.leading,
+							contentPadding: EdgeInsets.zero,
+							),
+						),
+						const SizedBox(width: 8),
+						TextButton(
+							onPressed: () => Navigator.pop(ctx),
+							child: const Text('Anuluj'),
+						),
+						const SizedBox(width: 4),
+						ElevatedButton(
+							onPressed: () {
+							setState(() => GlobalVars.selectedWordIds = temp);
+							Navigator.pop(ctx);
+							},
+							child: const Text('Zatwierdź'),
+						),
+						],
 					),
 					const Divider(),
 
 					for (var pid in sortedProvinceIds) ...[
 						Padding(
-							padding: const EdgeInsets.symmetric(vertical: 8),
-							child: Text(
+						padding: const EdgeInsets.symmetric(vertical: 8),
+						child: Text(
 							allProvinces.firstWhere((p) => p.id == pid).name,
 							style: const TextStyle(
-								fontWeight: FontWeight.bold,
-								fontSize: 16,
-							),
+							fontWeight: FontWeight.bold,
+							fontSize: 16,
 							),
 						),
+						),
 						for (var w in grouped[pid]!) Padding(
-							padding: const EdgeInsets.symmetric(vertical: 2.0),
-							child: CheckboxListTile(
-								title: Text(w.name),
-								value: temp.contains(w.id),
-								onChanged: (v) => setD(() {
-									if (v == true) {
-										temp.add(w.id);
-									} else {
-										temp.remove(w.id);
-									}
-								}),
-								controlAffinity: ListTileControlAffinity.leading,
-								tileColor: Theme.of(ctx).colorScheme.surface,
-								selectedTileColor: Theme.of(ctx)
-									.colorScheme
-									.primary
-									.withAlpha((0.1 * 255).round()),
-								shape: RoundedRectangleBorder(
-									borderRadius: BorderRadius.circular(6),
-								),
+						padding: const EdgeInsets.symmetric(vertical: 2.0),
+						child: CheckboxListTile(
+							title: Text(w.name),
+							value: temp.contains(w.id),
+							onChanged: (v) => setD(() {
+							if (v == true) {
+								temp.add(w.id);
+							} else {
+								temp.remove(w.id);
+							}
+							}),
+							controlAffinity: ListTileControlAffinity.leading,
+							tileColor: Theme.of(ctx).colorScheme.surface,
+							selectedTileColor: Theme.of(ctx)
+								.colorScheme
+								.primary
+								.withAlpha((0.1 * 255).round()),
+							shape: RoundedRectangleBorder(
+							borderRadius: BorderRadius.circular(6),
 							),
+						),
 						),
 						const Divider(),
 					],
 					],
 				),
+				),
 			),
-			actions: [
-				TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Anuluj')),
-				TextButton(onPressed: () {
-					setState(() => GlobalVars.selectedWordIds = temp);
-					Navigator.pop(ctx);
-				}, child: const Text('Zatwierdź')),
-			],
 			),
-		),
 		);
 	}
 
