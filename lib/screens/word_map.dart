@@ -289,9 +289,13 @@ class _WordMapScreenState extends State<WordMapScreen> {
 							setSt(() => isLoading = true);
 							final messenger = ScaffoldMessenger.of(context);
 							try {
+								final failed = <String>[];
 								final fetched = await ApiService.fetchExamSchedules(
-								[w.id], GlobalVars.words,
-								useTimeFilter: false
+									[w.id], GlobalVars.words,
+									useTimeFilter: false,
+									onError: (wordName) {
+										failed.add(wordName);
+									},
 								);
 								GlobalVars.examEvents = [
 								...GlobalVars.examEvents
@@ -299,6 +303,37 @@ class _WordMapScreenState extends State<WordMapScreen> {
 								...fetched
 								];
 								events = fetched;
+
+								if (fetched.isEmpty && failed.isEmpty) {
+									ScaffoldMessenger.of(context).showMaterialBanner(
+										MaterialBanner(
+											content: Text('Brak terminów dla: ${w.name}'),
+											leading: const Icon(Icons.error, color: Colors.red),
+											backgroundColor: Theme.of(context).colorScheme.surface,
+											actions: [
+												TextButton(
+													onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+													child: const Text('OK'),
+												),
+											],
+										),
+									);
+								} else if (failed.isNotEmpty) {
+									ScaffoldMessenger.of(context).showMaterialBanner(
+										MaterialBanner(
+											content: Text('Nie udało się pobrać terminów dla: ${failed.join(', ')}'),
+											leading: const Icon(Icons.error, color: Colors.red),
+											backgroundColor: Theme.of(context).colorScheme.surface,
+											actions: [
+												TextButton(
+													onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+													child: const Text('OK'),
+												),
+											],
+										),
+									);
+								}
+
 							} catch (e) {
 								messenger.showSnackBar(
 									SnackBar(content: Text('Błąd: $e'))
