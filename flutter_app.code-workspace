@@ -1,0 +1,87 @@
+{
+	"folders": [
+	{
+		"path": "."
+	}
+	],
+	"settings": {
+		"editor.formatOnSave": true,
+		"[dart]": {
+			"editor.insertSpaces": false,
+			"editor.tabSize": 4
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"Dart-Code.flutter",
+			"Dart-Code.dart-code"
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "flutter pub get",
+				"type": "shell",
+				"command": "flutter pub get",
+				"problemMatcher": []
+			},
+			{
+				"label": "Build Android APK",
+				"type": "process",
+				"command": "flutter",
+				"args": [
+					"build",
+					"apk",
+					"--release",
+					"--dart-define=LOGIN=venom93427@hedotu.com",
+					"--dart-define=PASSWORD=aaBB123123!"
+				],
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Run on Windows",
+				"type": "process",
+				"command": "flutter",
+				"args": [
+					"run",
+					"-d",
+					"windows",
+					"--dart-define=LOGIN=venom93427@hedotu.com",
+					"--dart-define=PASSWORD=aaBB123123!"
+				],
+				"group": "none",
+				"problemMatcher": []
+			}
+		]
+	},
+	"launch": {
+	"configurations": [
+		{
+			"name": "Debug Windows",
+			"type": "dart",
+			"request": "launch",
+			"program": "lib/main.dart",
+			"args": [
+				"-d",
+				"windows",
+				"--dart-define=LOGIN='venom93427@hedotu.com'",
+				"--dart-define=PASSWORD='aaBB123123!'"
+			],
+			"preLaunchTask": "flutter pub get"
+		},
+		{
+			"name": "Debug Android",
+			"type": "dart",
+			"request": "launch",
+			"program": "lib/main.dart",
+			"args": ["-d", "android"],
+			"preLaunchTask": "flutter pub get"
+		}
+	]
+	}
+}
