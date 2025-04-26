@@ -4,13 +4,6 @@
 		"path": "."
 	}
 	],
-	"settings": {
-		"editor.formatOnSave": true,
-		"[dart]": {
-			"editor.insertSpaces": false,
-			"editor.tabSize": 4
-		}
-	},
 	"extensions": {
 		"recommendations": [
 			"Dart-Code.flutter",
