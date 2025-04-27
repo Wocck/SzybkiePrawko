@@ -226,6 +226,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 				.toList()
 			..sort((a,b)=>a.dateTime.compareTo(b.dateTime));
 			bool isLoading = false;
+			bool hasFetched = false;
 
 			return StatefulBuilder(
 			builder: (ctx, setSt) => DraggableScrollableSheet(
@@ -271,21 +272,19 @@ class _WordMapScreenState extends State<WordMapScreen> {
 								)
 							: const Icon(Icons.download),
 							label: const Text('Pobierz terminy'),
-							style: GlobalVars.sessionActive
-								? null
-								: ElevatedButton.styleFrom(
-									backgroundColor: Theme.of(context).disabledColor,
-									),
-							onPressed: !GlobalVars.sessionActive || isLoading
-								? () {
-									if (!GlobalVars.sessionActive) {
-										ScaffoldMessenger.of(ctx).showSnackBar(
+							style: GlobalVars.sessionActive ? null: ElevatedButton.styleFrom(
+								backgroundColor: Theme.of(context).disabledColor,
+							),
+							onPressed: !GlobalVars.sessionActive || isLoading? () {
+								if (!GlobalVars.sessionActive) {
+									ScaffoldMessenger.of(ctx).showSnackBar(
 										const SnackBar(
 											content: Text('Sesja nieaktywna. Zaloguj się ponownie.'),
+											duration: Duration(seconds: 2),
 										),
-										);
-									}
-									} : () async {
+									);
+								}
+							} : () async {
 							setSt(() => isLoading = true);
 							final messenger = ScaffoldMessenger.of(context);
 							try {
@@ -298,40 +297,31 @@ class _WordMapScreenState extends State<WordMapScreen> {
 									},
 								);
 								GlobalVars.examEvents = [
-								...GlobalVars.examEvents
-									.where((e)=>e.wordId!=w.id),
-								...fetched
+									...GlobalVars.examEvents
+										.where((e)=>e.wordId!=w.id),
+									...fetched
 								];
-								events = fetched;
+								setSt(() {
+									events = fetched;
+									hasFetched = true;
+								});
 
 								if (fetched.isEmpty && failed.isEmpty) {
-									ScaffoldMessenger.of(context).showMaterialBanner(
-										MaterialBanner(
-											content: Text('Brak terminów dla: ${w.name}'),
-											leading: const Icon(Icons.error, color: Colors.red),
-											backgroundColor: Theme.of(context).colorScheme.surface,
-											actions: [
-												TextButton(
-													onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
-													child: const Text('OK'),
-												),
-											],
+									messenger.showSnackBar(
+										const SnackBar(
+											content: Text('Brak dostępnych terminów'),
+											duration: Duration(seconds: 2),
 										),
 									);
+									setSt(() { hasFetched = true; });
 								} else if (failed.isNotEmpty) {
-									ScaffoldMessenger.of(context).showMaterialBanner(
-										MaterialBanner(
-											content: Text('Nie udało się pobrać terminów dla: ${failed.join(', ')}'),
-											leading: const Icon(Icons.error, color: Colors.red),
-											backgroundColor: Theme.of(context).colorScheme.surface,
-											actions: [
-												TextButton(
-													onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
-													child: const Text('OK'),
-												),
-											],
+									messenger.showSnackBar(
+										SnackBar(
+											content: Text('Nie udało się pobrać: ${failed.join(', ')}'),
+											duration: const Duration(seconds: 2),
 										),
 									);
+									setSt(() { hasFetched = false; });
 								}
 
 							} catch (e) {
@@ -349,7 +339,8 @@ class _WordMapScreenState extends State<WordMapScreen> {
 					),
 					const Divider(height: 20),
 					Expanded(
-						child: events.isEmpty
+						child: hasFetched
+						? ( events.isEmpty
 						? const Center(child: Text('Brak terminów'))
 						: ListView.builder(
 							controller: controller,
@@ -365,7 +356,8 @@ class _WordMapScreenState extends State<WordMapScreen> {
 								subtitle: Text('Miejsc: ${e.places}'),
 								);
 							},
-							),
+							))
+						: const SizedBox.shrink(),
 					),
 					],
 				),

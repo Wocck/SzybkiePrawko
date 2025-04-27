@@ -188,6 +188,7 @@ class ApiService {
 			int attempts = 0;
 			const int maxAttempts = 4;
 			bool success = false;
+			bool requestRejected = false;
 			do {
 				attempts++;
 				res = await http.put(
@@ -198,8 +199,8 @@ class ApiService {
 					},
 					body: body,
 				);
-				final isHtmlError = res.body.trimLeft().startsWith('<html');
-				if (res.statusCode == 200 && !isHtmlError) {
+				requestRejected = (res.body.trimLeft().startsWith('<html') && res.statusCode == 200);
+				if (res.statusCode == 200 && !requestRejected) {
 					success = true;
 					break;
 				}
@@ -209,18 +210,13 @@ class ApiService {
 			} while (attempts < maxAttempts);
 
 			final wordName = allWords.firstWhere((w) => w.id == wId).name;
-			if (res.statusCode != 200 || res.body.trimLeft().startsWith('<html')) {
-				success = false;
+			if (res.statusCode != 200 || requestRejected) {
+				if (onError != null) onError(wordName);
 				continue;
 			}
 			if (res.statusCode == 401) {
 				success = false;
 				throw UnauthenticatedException();
-			}
-
-			 if (!success) {
-				if (onError != null) onError(wordName);
-				continue;
 			}
 
 			final data = jsonDecode(res.body) as Map<String, dynamic>;
