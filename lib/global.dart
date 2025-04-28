@@ -7,6 +7,7 @@ class GlobalVars {
 	static List<Province> provinces = [];
 	static List<Word> words = [];
 	static List<ExamEvent> examEvents = [];
+	static Set<int> fetchedWordIds = {};
 	static String bearerToken = '';
 	static List<int> selectedWordIds = [];
 	static bool sessionActive = false;

@@ -61,8 +61,6 @@ class _WordMapScreenState extends State<WordMapScreen> {
 			return _selectedMotos.contains(moto);
 		}).toList();
 
-		setState(() {});
-
 		return Scaffold(
 			appBar: _buildAppBar(),
 			body: Stack(
@@ -226,7 +224,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 				.toList()
 			..sort((a,b)=>a.dateTime.compareTo(b.dateTime));
 			bool isLoading = false;
-			bool hasFetched = false;
+			bool hasFetched = GlobalVars.fetchedWordIds.contains(w.id);
 
 			return StatefulBuilder(
 			builder: (ctx, setSt) => DraggableScrollableSheet(
@@ -334,14 +332,15 @@ class _WordMapScreenState extends State<WordMapScreen> {
 							},
 						),
 						const SizedBox(width: 16),
-						Text('(${events.length} terminów)'),
+						if (events.isNotEmpty)
+							Text('(${events.length} terminów)', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
 						],
 					),
 					const Divider(height: 20),
 					Expanded(
 						child: hasFetched
 						? ( events.isEmpty
-						? const Center(child: Text('Brak terminów'))
+						? const Center(child: Text('Brak terminów', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)))
 						: ListView.builder(
 							controller: controller,
 							itemCount: events.length,

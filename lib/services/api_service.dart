@@ -187,7 +187,6 @@ class ApiService {
 			http.Response res;
 			int attempts = 0;
 			const int maxAttempts = 4;
-			bool success = false;
 			bool requestRejected = false;
 			do {
 				attempts++;
@@ -201,7 +200,6 @@ class ApiService {
 				);
 				requestRejected = (res.body.trimLeft().startsWith('<html') && res.statusCode == 200);
 				if (res.statusCode == 200 && !requestRejected) {
-					success = true;
 					break;
 				}
 				if (attempts < maxAttempts) {
@@ -215,7 +213,6 @@ class ApiService {
 				continue;
 			}
 			if (res.statusCode == 401) {
-				success = false;
 				throw UnauthenticatedException();
 			}
 
@@ -238,6 +235,8 @@ class ApiService {
 					}
 				}
 			}
+			
+			GlobalVars.fetchedWordIds.add(wId);
 		}
 		return allEvents;
 	}
