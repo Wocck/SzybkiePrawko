@@ -42,21 +42,23 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 				child: Column(
 					children: [
 					Row(
+						mainAxisAlignment: MainAxisAlignment.end,
 						children: [
-						Expanded(
-							child: CheckboxListTile(
-							title: const Text('Zaznacz wszystkie'),
-							value: temp.length == allProvinces.length,
-							onChanged: (v) => setD(() {
-								temp.clear();
-								if (v == true) {
-								temp.addAll(allProvinces.map((p) => p.id));
-								}
-							}),
-							controlAffinity: ListTileControlAffinity.leading,
-							contentPadding: EdgeInsets.zero,
+							TextButton.icon(
+								label: const Text(''),
+								icon: Icon(
+									temp.length == allProvinces.length
+									? Icons.check_box_outlined
+									: Icons.check_box_outline_blank
+								),
+								onPressed: () => setD(() {
+									if (temp.length == allProvinces.length) {
+										temp.clear();
+									} else {
+										temp..clear()..addAll(allProvinces.map((p) => p.id));
+									}
+								}),
 							),
-						),
 						const SizedBox(width: 8),
 						TextButton(
 							onPressed: () => Navigator.pop(ctx),
@@ -137,24 +139,24 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 				child: Column(
 					children: [
 					Row(
+						mainAxisAlignment: MainAxisAlignment.end,
 						children: [
-						Expanded(
-							child: CheckboxListTile(
-							title: const Text('Zaznacz wszystkie'),
-							value: filtered.every((w) => temp.contains(w.id)),
-							onChanged: (v) => setD(() {
-								if (v == true) {
-								temp.addAll(filtered.map((w) => w.id));
-								} else {
-								for (final w in filtered) {
-									temp.remove(w.id);
-								}
-								}
-							}),
-							controlAffinity: ListTileControlAffinity.leading,
-							contentPadding: EdgeInsets.zero,
+						TextButton.icon(
+							label: const Text(''),
+							icon: Icon(
+							filtered.every((w) => temp.contains(w.id))
+								? Icons.check_box_outlined
+								: Icons.check_box_outline_blank
 							),
+							onPressed: () => setD(() {
+							if (filtered.every((w) => temp.contains(w.id))) {
+								temp.clear();
+							} else {
+								temp..clear()..addAll(filtered.map((w) => w.id));
+							}
+							}),
 						),
+
 						const SizedBox(width: 8),
 						TextButton(
 							onPressed: () => Navigator.pop(ctx),
