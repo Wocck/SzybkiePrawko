@@ -24,6 +24,11 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Install NuGet (required for some dependencies)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nuget
+
     - name: Set up Android SDK (manual)
       run: |
         mkdir -p $HOME/android-sdk/cmdline-tools
@@ -40,7 +45,7 @@ jobs:
       run: yes | sdkmanager --licenses
 
     - name: Install required Android packages
-      run: sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+      run: sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "ndk;29.0.13113456"
 
     - name: Install Flutter dependencies
       run: flutter pub get
