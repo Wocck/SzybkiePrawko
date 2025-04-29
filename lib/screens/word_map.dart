@@ -129,7 +129,6 @@ class _WordMapScreenState extends State<WordMapScreen> {
 
 	void _showOverlayMessage(BuildContext context, String text) {
 		final overlayState = Overlay.of(context);
-		if (overlayState == null) return;
 
 		final entry = OverlayEntry(
 			builder: (ctx) {
