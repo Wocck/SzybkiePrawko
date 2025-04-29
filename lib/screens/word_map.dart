@@ -128,6 +128,40 @@ class _WordMapScreenState extends State<WordMapScreen> {
 		);
 	}
 
+	void _showOverlayMessage(BuildContext context, String text) {
+		final overlayState = Overlay.of(context);
+		if (overlayState == null) return;
+
+		final entry = OverlayEntry(
+			builder: (ctx) {
+				final bottomPadding = MediaQuery.of(ctx).padding.bottom + 20;
+				return Positioned(
+					bottom: bottomPadding,
+					left: 20,
+					right: 20,
+					child: Material(
+						color: Colors.black87,
+						elevation: 6,
+						borderRadius: BorderRadius.circular(8),
+						child: Padding(
+							padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+							child: Text(
+							text,
+							style: const TextStyle(color: Colors.white, fontSize: 14),
+							textAlign: TextAlign.center,
+							),
+						),
+					),
+				);
+			},
+		);
+
+		overlayState.insert(entry);
+		Future.delayed(const Duration(seconds: 2), () {
+			entry.remove();
+		});
+	}
+
 	AppBar _buildAppBar() {
 		return AppBar(
 		title: Center(
@@ -251,10 +285,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 								icon: const Icon(Icons.copy, size: 20),
 								tooltip: 'Kopiuj adres',
 								onPressed: () {
-									Clipboard.setData(ClipboardData(text: w.address));
-									ScaffoldMessenger.of(ctx).showSnackBar(
-									const SnackBar(content: Text('Adres skopiowany do schowka')),
-									);
+									_showOverlayMessage(ctx, 'Adres skopiowany do schowka');
 								},
 							),
 						],
@@ -275,12 +306,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 							),
 							onPressed: !GlobalVars.sessionActive || isLoading? () {
 								if (!GlobalVars.sessionActive) {
-									ScaffoldMessenger.of(ctx).showSnackBar(
-										const SnackBar(
-											content: Text('Sesja nieaktywna. Zaloguj się ponownie.'),
-											duration: Duration(seconds: 2),
-										),
-									);
+									_showOverlayMessage(ctx, 'Sesja nieaktywna. Zaloguj się ponownie.');
 								}
 							} : () async {
 							setSt(() => isLoading = true);
@@ -305,20 +331,10 @@ class _WordMapScreenState extends State<WordMapScreen> {
 								});
 
 								if (fetched.isEmpty && failed.isEmpty) {
-									messenger.showSnackBar(
-										const SnackBar(
-											content: Text('Brak dostępnych terminów'),
-											duration: Duration(seconds: 2),
-										),
-									);
+									_showOverlayMessage(ctx, 'Brak dostępnych terminów');
 									setSt(() { hasFetched = true; });
 								} else if (failed.isNotEmpty) {
-									messenger.showSnackBar(
-										SnackBar(
-											content: Text('Nie udało się pobrać: ${failed.join(', ')}'),
-											duration: const Duration(seconds: 2),
-										),
-									);
+									_showOverlayMessage(ctx, 'Nie udało się pobrać: ${failed.join(', ')}');
 									setSt(() { hasFetched = false; });
 								}
 
