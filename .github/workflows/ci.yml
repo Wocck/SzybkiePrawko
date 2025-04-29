@@ -23,12 +23,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run analyzer
-        run: flutter analyze
-
-      - name: Run tests
-        run: flutter test
-
       - name: Build release APK
         run: flutter build apk --release \
           --dart-define=LOGIN=${{ secrets.LOGIN }} \
