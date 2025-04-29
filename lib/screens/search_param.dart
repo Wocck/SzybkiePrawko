@@ -358,7 +358,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 											? Theme.of(ctx).colorScheme.primary.withAlpha((0.1 * 255).round())
 											: Theme.of(ctx).colorScheme.surface,
 										child: CheckboxListTile(
-										title: Text(p.name),
+										title: Text(p.name, style: const TextStyle(fontSize: 16)),
 										value: sel,
 										onChanged: (v) => setD(() {
 											if (v == true) {
@@ -519,12 +519,14 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 										children: [
 										Padding(
 											padding: const EdgeInsets.only(top: 12, bottom: 8, left: 4),
-											child: Text(
-											allProvinces.firstWhere((p) => p.id == pid).name,
-											style: const TextStyle(
-												fontWeight: FontWeight.bold,
-												fontSize: 16,
-											),
+											child: Center (
+												child:Text(
+													allProvinces.firstWhere((p) => p.id == pid).name.toUpperCase(),
+													style: const TextStyle(
+														fontWeight: FontWeight.bold,
+														fontSize: 18,
+													),
+												),
 											),
 										),
 										
@@ -540,7 +542,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 												? Theme.of(ctx).colorScheme.primary.withAlpha((0.1 * 255).round())
 												: Theme.of(ctx).colorScheme.surface,
 											child: CheckboxListTile(
-												title: Text(w.name),
+												title: Text(w.name, style: const TextStyle(fontSize: 16)),
 												value: temp.contains(w.id),
 												onChanged: (v) => setD(() {
 												if (v == true) {
