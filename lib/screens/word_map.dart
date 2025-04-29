@@ -5,7 +5,6 @@ import '../global.dart';
 import '../models.dart';
 import 'package:intl/intl.dart';
 import 'package:szybkie_prawko/services/api_service.dart';
-import 'package:flutter/services.dart';
 
 class WordMapScreen extends StatefulWidget {
 	const WordMapScreen({super.key});
@@ -50,7 +49,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 			.where((w) => GlobalVars.selectedWordIds.contains(w.id))
 			.toList();
 		if (selectedWords.isEmpty) {
-			return const Center(child: Text('Brak zaznaczonych ośrodków'));
+			return const Center(child: Text('Zaznacz ośrodki aby wyświetlić mapę!', style: TextStyle(fontWeight: FontWeight.bold)));
 		}
 
 		final filtered = selectedWords.where((w) {
