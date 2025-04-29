@@ -15,12 +15,6 @@
 	</a>
 </p>
 
-> ℹ️ **Quick Start**  
-> • Flutter ≥ 3.0  
-> • Dart ≥ 2.x  
-> • License: GPL v3  
-> • Platforms: Android, Windows
-
 
 SzybkiePrawko is a Flutter application that allows you to search for exam centers, view available exam dates on a calendar, and locate centers on a map. It depends on `info-car.pl` website for data retrieval.
 
