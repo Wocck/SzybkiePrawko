@@ -169,7 +169,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 									setState(() => _isLoading = false);
 								}
 								},
-						child: const Text('Start'),
+						child: const Text('Wyszukaj'),
 						),
 						
 						if (exceedMax) ...[
@@ -248,86 +248,137 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		super.dispose();
 	}
 
-
 	void _showProvincesDialog() async {
 		final temp = List<int>.from(selectedProvinceIds);
 		await showDialog(
 			context: context,
 			builder: (_) => StatefulBuilder(
-			builder: (ctx, setD) => AlertDialog(
-				title: const Text('Wybierz województwa'),
-				content: SingleChildScrollView(
-				child: Column(
-					children: [
-					Row(
-						mainAxisAlignment: MainAxisAlignment.end,
+			builder: (ctx, setD) {
+				return Dialog(
+				shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+				child: Container(
+					height: MediaQuery.of(ctx).size.height * 0.7,
+					width: MediaQuery.of(ctx).size.width * 0.8,
+					padding: const EdgeInsets.all(16),
+					child: Material(
+					color: Colors.transparent,
+					child: Column(
+						crossAxisAlignment: CrossAxisAlignment.start,
 						children: [
-							TextButton.icon(
-								label: const Text(''),
-								icon: Icon(
+						const Text(
+							'Wybierz województwa',
+							style: TextStyle(
+							fontSize: 20,
+							fontWeight: FontWeight.bold,
+							),
+						),
+						const SizedBox(height: 16),
+						Material(
+							elevation: 4,
+							borderRadius: BorderRadius.circular(8),
+							child: Container(
+							padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+							decoration: BoxDecoration(
+								color: Theme.of(ctx).cardColor,
+								borderRadius: BorderRadius.circular(8),
+							),
+							child: Row(
+								mainAxisAlignment: MainAxisAlignment.end,
+								children: [
+								TextButton.icon(
+									label: const Text(''),
+									icon: Icon(
 									temp.length == allProvinces.length
-									? Icons.check_box_outlined
-									: Icons.check_box_outline_blank
-								),
-								onPressed: () => setD(() {
+										? Icons.check_box_outlined
+										: Icons.check_box_outline_blank,
+									),
+									onPressed: () => setD(() {
 									if (temp.length == allProvinces.length) {
 										temp.clear();
 									} else {
-										temp..clear()..addAll(allProvinces.map((p) => p.id));
+										temp
+										..clear()
+										..addAll(allProvinces.map((p) => p.id));
 									}
-								}),
+									}),
+								),
+								const Spacer(),
+								TextButton(
+									onPressed: () => Navigator.pop(ctx),
+									child: const Text('Anuluj'),
+								),
+								const SizedBox(width: 8),
+								ElevatedButton(
+									onPressed: () {
+									setState(() {
+										selectedProvinceIds = temp;
+										GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
+										final w = allWords.firstWhere((w) => w.id == wId);
+										return selectedProvinceIds.contains(w.provinceId);
+										}).toList();
+									});
+									Navigator.pop(ctx);
+									},
+									child: const Text('Zatwierdź'),
+								),
+								],
 							),
-						const SizedBox(width: 8),
-						TextButton(
-							onPressed: () => Navigator.pop(ctx),
-							child: const Text('Anuluj'),
+							),
 						),
-						const SizedBox(width: 4),
-						ElevatedButton(
-							onPressed: () {
-							setState(() {
-								selectedProvinceIds = temp;
-								GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
-								final w = allWords.firstWhere((w) => w.id == wId);
-								return selectedProvinceIds.contains(w.provinceId);
-								}).toList();
-							});
-							Navigator.pop(ctx);
-							},
-							child: const Text('Zatwierdź'),
+						const SizedBox(height: 12),
+						Expanded(
+							child: Material(
+							elevation: 2,
+							borderRadius: BorderRadius.circular(8),
+							clipBehavior: Clip.antiAlias,
+							child: Container(
+								color: Theme.of(ctx).scaffoldBackgroundColor,
+								child: ListView.builder(
+								padding: const EdgeInsets.all(8),
+								itemCount: allProvinces.length,
+								itemBuilder: (context, index) {
+									final p = allProvinces[index];
+									final sel = temp.contains(p.id);
+									return Padding(
+									padding: const EdgeInsets.symmetric(vertical: 2.0),
+									child: Card(
+										elevation: 0,
+										margin: EdgeInsets.zero,
+										shape: RoundedRectangleBorder(
+										borderRadius: BorderRadius.circular(6),
+										),
+										color: sel
+											? Theme.of(ctx).colorScheme.primary.withAlpha((0.1 * 255).round())
+											: Theme.of(ctx).colorScheme.surface,
+										child: CheckboxListTile(
+										title: Text(p.name),
+										value: sel,
+										onChanged: (v) => setD(() {
+											if (v == true) {
+											temp.add(p.id);
+											} else {
+											temp.remove(p.id);
+											}
+										}),
+										controlAffinity: ListTileControlAffinity.leading,
+										dense: true,
+										),
+									),
+									);
+								},
+								),
+							),
+							),
 						),
 						],
 					),
-					const Divider(),
-					...allProvinces.map((p) {
-						final sel = temp.contains(p.id);
-						return Padding(
-						padding: const EdgeInsets.symmetric(vertical: 2.0),
-						child: CheckboxListTile(
-							title: Text(p.name),
-							value: sel,
-							onChanged: (v) => setD(() {
-							if (v == true) {
-								temp.add(p.id);
-							} else {
-								temp.remove(p.id);
-							}
-							}),
-							tileColor: Theme.of(context).colorScheme.surface,
-							selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
-							shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-							controlAffinity: ListTileControlAffinity.leading,
-						),
-						);
-					}),
-					],
+					),
 				),
-				),
-			),
+				);
+			},
 			),
 		);
 	}
-
 
 	void _showWordsDialog() async {
 		final temp = List<int>.from(GlobalVars.selectedWordIds);
@@ -339,8 +390,8 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		void filter() {
 			final q = search.toLowerCase().trim();
 			displayList = baseList
-			.where((w) => w.name.toLowerCase().contains(q))
-			.toList();
+				.where((w) => w.name.toLowerCase().contains(q))
+				.toList();
 		}
 
 		await showDialog(
@@ -358,99 +409,157 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 					return na.compareTo(nb);
 				});
 
-				return AlertDialog(
-				title: const Text('Wybierz ośrodki'),
-				content: SizedBox(
-					height: MediaQuery.of(ctx).size.height * 0.6,
+				return Dialog(
+				shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+				child: Container(
+					height: MediaQuery.of(ctx).size.height * 0.7,
 					width: MediaQuery.of(ctx).size.width * 0.8,
+					padding: const EdgeInsets.all(16),
+					child: Material(
+					color: Colors.transparent,
 					child: Column(
-					children: [
+						crossAxisAlignment: CrossAxisAlignment.start,
+						children: [
+						const Padding(
+							padding: EdgeInsets.only(bottom: 16),
+							child: Text(
+							'Wybierz ośrodki',
+							style: TextStyle(
+								fontSize: 20,
+								fontWeight: FontWeight.bold,
+							),
+							),
+						),
+						
 						TextField(
-						decoration: const InputDecoration(
-							prefixIcon: Icon(Icons.search),
-							hintText: 'Szukaj po nazwie...',
+							decoration: const InputDecoration(
+								prefixIcon: Icon(Icons.search),
+								hintText: 'Szukaj po nazwie...',
+								contentPadding: EdgeInsets.symmetric(vertical: 8),
+							),
+							onChanged: (val) => setD(() {
+								search = val;
+								filter();
+							}),
 						),
-						onChanged: (val) => setD(() {
-							search = val;
-							filter();
-						}),
-						),
-						const Divider(),
-
-						Row(
-							mainAxisAlignment: MainAxisAlignment.end,
-							children: [
+						const SizedBox(height: 12),
+						
+						Material(
+							elevation: 4,
+							borderRadius: BorderRadius.circular(8),
+							child: Container(
+							padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+							decoration: BoxDecoration(
+								color: Theme.of(ctx).cardColor,
+								borderRadius: BorderRadius.circular(8),
+							),
+							child: Row(
+								mainAxisAlignment: MainAxisAlignment.end,
+								children: [
 								TextButton.icon(
 									label: const Text(''),
 									icon: Icon(
-										displayList.every((w) => temp.contains(w.id))
-											? Icons.check_box_outlined
-											: Icons.check_box_outline_blank
+									displayList.every((w) => temp.contains(w.id))
+										? Icons.check_box_outlined
+										: Icons.check_box_outline_blank
 									),
 									onPressed: () => setD(() {
-										if (displayList.every((w) => temp.contains(w.id))) {
-											temp.clear();
-										} else {
-											temp..clear()..addAll(displayList.map((w) => w.id));
-										}
+									if (displayList.every((w) => temp.contains(w.id))) {
+										temp.clear();
+									} else {
+										temp..clear()..addAll(displayList.map((w) => w.id));
+									}
 									}),
 								),
-
-								const SizedBox(width: 8),
+								const Spacer(),
 								TextButton(
-								onPressed: () => Navigator.pop(ctx),
-								child: const Text('Anuluj'),
+									onPressed: () => Navigator.pop(ctx),
+									child: const Text('Anuluj'),
 								),
-								const SizedBox(width: 4),
+								const SizedBox(width: 8),
 								ElevatedButton(
-								onPressed: () {
+									onPressed: () {
 									setState(() => GlobalVars.selectedWordIds = temp);
 									Navigator.pop(ctx);
-								},
-								child: const Text('Zatwierdź'),
+									},
+									child: const Text('Zatwierdź'),
 								),
-							],
+								],
+							),
+							),
 						),
-						const Divider(),
-
+						const SizedBox(height: 12),
+						
 						Expanded(
-						child: ListView(
-							children: [
-							for (var pid in sortedProvinceIds) ...[
-								Padding(
-								padding: const EdgeInsets.symmetric(vertical: 8),
-								child: Text(
-									allProvinces.firstWhere((p) => p.id == pid).name,
-									style: const TextStyle(
-									fontWeight: FontWeight.bold,
-									fontSize: 16,
-									),
+							child: Material(
+							elevation: 2,
+							borderRadius: BorderRadius.circular(8),
+							clipBehavior: Clip.antiAlias,
+							child: Stack(
+								children: [
+								Container(
+									color: Theme.of(ctx).scaffoldBackgroundColor,
 								),
+								ListView.builder(
+									padding: const EdgeInsets.all(8),
+									itemCount: sortedProvinceIds.length,
+									itemBuilder: (context, provinceIndex) {
+									final pid = sortedProvinceIds[provinceIndex];
+									final items = groupedMap[pid]!;
+									
+									return Column(
+										crossAxisAlignment: CrossAxisAlignment.start,
+										children: [
+										Padding(
+											padding: const EdgeInsets.only(top: 12, bottom: 8, left: 4),
+											child: Text(
+											allProvinces.firstWhere((p) => p.id == pid).name,
+											style: const TextStyle(
+												fontWeight: FontWeight.bold,
+												fontSize: 16,
+											),
+											),
+										),
+										
+										...items.map((w) => Padding(
+											padding: const EdgeInsets.symmetric(vertical: 2),
+											child: Card(
+											elevation: 0,
+											margin: EdgeInsets.zero,
+											shape: RoundedRectangleBorder(
+												borderRadius: BorderRadius.circular(6),
+											),
+											color: temp.contains(w.id)
+												? Theme.of(ctx).colorScheme.primary.withAlpha((0.1 * 255).round())
+												: Theme.of(ctx).colorScheme.surface,
+											child: CheckboxListTile(
+												title: Text(w.name),
+												value: temp.contains(w.id),
+												onChanged: (v) => setD(() {
+												if (v == true) {
+													temp.add(w.id);
+												} else {
+													temp.remove(w.id);
+												}
+												}),
+												controlAffinity: ListTileControlAffinity.leading,
+												dense: true,
+											),
+											),
+										)),
+										
+										if (provinceIndex < sortedProvinceIds.length - 1)
+											const Divider(height: 24),
+										],
+									);
+									},
 								),
-								for (var w in groupedMap[pid]!) CheckboxListTile(
-								title: Text(w.name),
-								value: temp.contains(w.id),
-								onChanged: (v) => setD(() {
-									if (v == true) {
-									temp.add(w.id);
-									} else {
-									temp.remove(w.id);
-									}
-								}),
-								controlAffinity: ListTileControlAffinity.leading,
-								tileColor: Theme.of(ctx).colorScheme.surface,
-								selectedTileColor: Theme.of(ctx)
-									.colorScheme
-									.primary
-									.withAlpha((0.1 * 255).round()),
-								shape: RoundedRectangleBorder(
-									borderRadius: BorderRadius.circular(6)),
-								),
-							],
-							],
+								],
+							),
+							),
 						),
-						),
-					],
+						],
+					),
 					),
 				),
 				);
