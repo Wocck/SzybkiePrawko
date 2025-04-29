@@ -10,8 +10,9 @@
 	<a href="https://github.com/TwojRepo/LICENSE">
 		<img src="https://img.shields.io/badge/License-GPLv3-green" alt="License GPLv3"/>
 	</a>
-	<a href="https://github.com/TwojRepo/actions">
-		<img src="https://img.shields.io/github/workflow/status/TwojRepo/SzybkiePrawko/Build?label=build&logo=github" alt="Build status"/>
+	<a href="https://github.com/Wocck/SzybkiePrawko/actions/workflows/ci.yml">
+		<img src="https://github.com/Wocck/SzybkiePrawko/actions/workflows/ci.yml/badge.svg"
+			alt="Build status"/>
 	</a>
 </p>
 
