@@ -110,7 +110,6 @@ class _PageContainerState extends State<PageContainer> {
 	Widget build(BuildContext context) {
 	return Scaffold(
 		appBar: AppBar(
-		title: const Text('Wyszukaj egzamin'),
 		actions: [
 			IconButton(
 			icon: Icon(
