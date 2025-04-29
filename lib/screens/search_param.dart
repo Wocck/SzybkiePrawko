@@ -587,7 +587,8 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 				'2. Opcjonalnie ustaw filtr godzinowy.\n'
 				'3. Kliknij "Wyszukaj", aby pobrać dostępne terminy (Max 4 ośrodki).\n\n'
 				'⚠️ Uwaga: Ze względu na ograniczenia portalu Info-Car można wyszukać maksymalnie 4 ośrodki jednocześnie.\n'
-				'Po pobraniu wyników możesz ładować terminy dla poszczególnych ośrodków klikając na nie na mapie.\n\n'
+				'Po wybraniu ośrodkó możesz ładować terminy dla poszczególnych ośrodków klikając na nie na mapie.\n\n'
+				'⚠️ Uwaga: Modele motocykli są w wiekszości poprawne ale w niektórych przypadkach mogą się różnić, warto upewnić się na stronie danego WORD-u.\n\n'
 				'🔄 Sesja jest automatycznie odświeżana co 30 sekund. Jeśli sesja wygaśnie (czerwona kropka w prawym dolnym rogu), wróć na ekran główny i użyj przycisku odświeżania lub poczekaj 30s.\n\n'
 				'🚫 Zbyt częste zapytania do Info-Car mogą spowodować blokadę zapytań na 10–15 sekund — w takim przypadku należy chwilę odczekać.'
 			),
