@@ -12,16 +12,30 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-	DateTime _focusedMonth = DateTime.now();
+	late DateTime _focusedMonth;
 	static const List<String> _weekdays = ['Pn','Wt','Śr','Cz','Pt','Sb','Nd'];
+
+	@override
+	void initState() {
+		super.initState();
+		
+		if (widget.events.isNotEmpty) {
+			final earliest = widget.events
+				.map((e) => e.dateTime)
+				.reduce((a, b) => a.isBefore(b) ? a : b);
+			_focusedMonth = DateTime(earliest.year, earliest.month);
+		} else {
+			_focusedMonth = DateTime.now();
+		}
+	}
 
 	void _goToPreviousMonth() => setState(() {
 		_focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month - 1);
-		});
+	});
 
 	void _goToNextMonth() => setState(() {
 		_focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1);
-		});
+	});
 
 	List<Widget> _buildDaysGrid() {
 		final List<Widget> dayTiles = [];
