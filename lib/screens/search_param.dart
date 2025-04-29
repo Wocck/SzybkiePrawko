@@ -18,204 +18,17 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 
 	List<Province> allProvinces = GlobalVars.provinces;
 	List<Word> allWords = GlobalVars.words;
-
 	List<int> selectedProvinceIds = [];
-
 	Timer? _sessionTimer;
-
 	bool _isLoading = false;
-
 	bool _useTimeFilter = false;
 	TimeOfDay _startTime = const TimeOfDay(hour: 5, minute: 0);
 	TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
 	
-
-
-	void _showProvincesDialog() async {
-		final temp = List<int>.from(selectedProvinceIds);
-		await showDialog(
-			context: context,
-			builder: (_) => StatefulBuilder(
-			builder: (ctx, setD) => AlertDialog(
-				title: const Text('Wybierz województwa'),
-				content: SingleChildScrollView(
-				child: Column(
-					children: [
-					Row(
-						mainAxisAlignment: MainAxisAlignment.end,
-						children: [
-							TextButton.icon(
-								label: const Text(''),
-								icon: Icon(
-									temp.length == allProvinces.length
-									? Icons.check_box_outlined
-									: Icons.check_box_outline_blank
-								),
-								onPressed: () => setD(() {
-									if (temp.length == allProvinces.length) {
-										temp.clear();
-									} else {
-										temp..clear()..addAll(allProvinces.map((p) => p.id));
-									}
-								}),
-							),
-						const SizedBox(width: 8),
-						TextButton(
-							onPressed: () => Navigator.pop(ctx),
-							child: const Text('Anuluj'),
-						),
-						const SizedBox(width: 4),
-						ElevatedButton(
-							onPressed: () {
-							setState(() {
-								selectedProvinceIds = temp;
-								GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
-								final w = allWords.firstWhere((w) => w.id == wId);
-								return selectedProvinceIds.contains(w.provinceId);
-								}).toList();
-							});
-							Navigator.pop(ctx);
-							},
-							child: const Text('Zatwierdź'),
-						),
-						],
-					),
-					const Divider(),
-					...allProvinces.map((p) {
-						final sel = temp.contains(p.id);
-						return Padding(
-						padding: const EdgeInsets.symmetric(vertical: 2.0),
-						child: CheckboxListTile(
-							title: Text(p.name),
-							value: sel,
-							onChanged: (v) => setD(() {
-							if (v == true) {
-								temp.add(p.id);
-							} else {
-								temp.remove(p.id);
-							}
-							}),
-							tileColor: Theme.of(context).colorScheme.surface,
-							selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
-							shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-							controlAffinity: ListTileControlAffinity.leading,
-						),
-						);
-					}),
-					],
-				),
-				),
-			),
-			),
-		);
-	}
-
-
-	void _showWordsDialog() async {
-		final temp = List<int>.from(GlobalVars.selectedWordIds);
-
-		final filtered = allWords
-			.where((w) => selectedProvinceIds.contains(w.provinceId))
-			.toList();
-
-		final Map<int, List<Word>> grouped = {};
-		for (var w in filtered) {
-			grouped.putIfAbsent(w.provinceId, () => []).add(w);
-		}
-
-		final sortedProvinceIds = grouped.keys.toList()
-			..sort((a, b) {
-				final pa = allProvinces.firstWhere((p) => p.id == a).name;
-				final pb = allProvinces.firstWhere((p) => p.id == b).name;
-				return pa.compareTo(pb);
-		});
-
-		await showDialog(
-			context: context,
-			builder: (_) => StatefulBuilder(
-			builder: (ctx, setD) => AlertDialog(
-				title: const Text('Wybierz ośrodki'),
-				content: SingleChildScrollView(
-				child: Column(
-					children: [
-					Row(
-						mainAxisAlignment: MainAxisAlignment.end,
-						children: [
-						TextButton.icon(
-							label: const Text(''),
-							icon: Icon(
-							filtered.every((w) => temp.contains(w.id))
-								? Icons.check_box_outlined
-								: Icons.check_box_outline_blank
-							),
-							onPressed: () => setD(() {
-							if (filtered.every((w) => temp.contains(w.id))) {
-								temp.clear();
-							} else {
-								temp..clear()..addAll(filtered.map((w) => w.id));
-							}
-							}),
-						),
-
-						const SizedBox(width: 8),
-						TextButton(
-							onPressed: () => Navigator.pop(ctx),
-							child: const Text('Anuluj'),
-						),
-						const SizedBox(width: 4),
-						ElevatedButton(
-							onPressed: () {
-							setState(() => GlobalVars.selectedWordIds = temp);
-							Navigator.pop(ctx);
-							},
-							child: const Text('Zatwierdź'),
-						),
-						],
-					),
-					const Divider(),
-
-					for (var pid in sortedProvinceIds) ...[
-						Padding(
-						padding: const EdgeInsets.symmetric(vertical: 8),
-						child: Text(
-							allProvinces.firstWhere((p) => p.id == pid).name,
-							style: const TextStyle(
-							fontWeight: FontWeight.bold,
-							fontSize: 16,
-							),
-						),
-						),
-						for (var w in grouped[pid]!) Padding(
-						padding: const EdgeInsets.symmetric(vertical: 2.0),
-						child: CheckboxListTile(
-							title: Text(w.name),
-							value: temp.contains(w.id),
-							onChanged: (v) => setD(() {
-							if (v == true) {
-								temp.add(w.id);
-							} else {
-								temp.remove(w.id);
-							}
-							}),
-							controlAffinity: ListTileControlAffinity.leading,
-							tileColor: Theme.of(ctx).colorScheme.surface,
-							selectedTileColor: Theme.of(ctx)
-								.colorScheme
-								.primary
-								.withAlpha((0.1 * 255).round()),
-							shape: RoundedRectangleBorder(
-							borderRadius: BorderRadius.circular(6),
-							),
-						),
-						),
-						const Divider(),
-					],
-					],
-				),
-				),
-			),
-			),
-		);
+	@override
+	void initState() {
+		super.initState();
+		_initLoginAndSession();
 	}
 
 
@@ -225,7 +38,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 
 		final exceedMax = GlobalVars.selectedWordIds.length > GlobalVars.maxWords;
 		
-	return Scaffold(
+		return Scaffold(
 		appBar: AppBar(
 			title: Center(
 				child: const Text('Wyszukiwanie')
@@ -427,12 +240,225 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		),
 	);
 	}
-	
+
+
 	@override
-	void initState() {
-		super.initState();
-		_initLoginAndSession();
+	void dispose() {
+		_sessionTimer?.cancel();
+		super.dispose();
 	}
+
+
+	void _showProvincesDialog() async {
+		final temp = List<int>.from(selectedProvinceIds);
+		await showDialog(
+			context: context,
+			builder: (_) => StatefulBuilder(
+			builder: (ctx, setD) => AlertDialog(
+				title: const Text('Wybierz województwa'),
+				content: SingleChildScrollView(
+				child: Column(
+					children: [
+					Row(
+						mainAxisAlignment: MainAxisAlignment.end,
+						children: [
+							TextButton.icon(
+								label: const Text(''),
+								icon: Icon(
+									temp.length == allProvinces.length
+									? Icons.check_box_outlined
+									: Icons.check_box_outline_blank
+								),
+								onPressed: () => setD(() {
+									if (temp.length == allProvinces.length) {
+										temp.clear();
+									} else {
+										temp..clear()..addAll(allProvinces.map((p) => p.id));
+									}
+								}),
+							),
+						const SizedBox(width: 8),
+						TextButton(
+							onPressed: () => Navigator.pop(ctx),
+							child: const Text('Anuluj'),
+						),
+						const SizedBox(width: 4),
+						ElevatedButton(
+							onPressed: () {
+							setState(() {
+								selectedProvinceIds = temp;
+								GlobalVars.selectedWordIds = GlobalVars.selectedWordIds.where((wId) {
+								final w = allWords.firstWhere((w) => w.id == wId);
+								return selectedProvinceIds.contains(w.provinceId);
+								}).toList();
+							});
+							Navigator.pop(ctx);
+							},
+							child: const Text('Zatwierdź'),
+						),
+						],
+					),
+					const Divider(),
+					...allProvinces.map((p) {
+						final sel = temp.contains(p.id);
+						return Padding(
+						padding: const EdgeInsets.symmetric(vertical: 2.0),
+						child: CheckboxListTile(
+							title: Text(p.name),
+							value: sel,
+							onChanged: (v) => setD(() {
+							if (v == true) {
+								temp.add(p.id);
+							} else {
+								temp.remove(p.id);
+							}
+							}),
+							tileColor: Theme.of(context).colorScheme.surface,
+							selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha((0.1 * 255).round()),
+							shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+							controlAffinity: ListTileControlAffinity.leading,
+						),
+						);
+					}),
+					],
+				),
+				),
+			),
+			),
+		);
+	}
+
+
+	void _showWordsDialog() async {
+		final temp = List<int>.from(GlobalVars.selectedWordIds);
+		final baseList = allWords.where((w) => selectedProvinceIds.contains(w.provinceId)).toList();
+
+		String search = '';
+		List<Word> displayList = List.from(baseList);
+
+		void filter() {
+			final q = search.toLowerCase().trim();
+			displayList = baseList
+			.where((w) => w.name.toLowerCase().contains(q))
+			.toList();
+		}
+
+		await showDialog(
+			context: context,
+			builder: (_) => StatefulBuilder(
+			builder: (ctx, setD) {
+				final groupedMap = <int, List<Word>>{};
+				for (var w in displayList) {
+				groupedMap.putIfAbsent(w.provinceId, () => []).add(w);
+				}
+				final sortedProvinceIds = groupedMap.keys.toList()
+				..sort((a, b) {
+					final na = allProvinces.firstWhere((p) => p.id == a).name;
+					final nb = allProvinces.firstWhere((p) => p.id == b).name;
+					return na.compareTo(nb);
+				});
+
+				return AlertDialog(
+				title: const Text('Wybierz ośrodki'),
+				content: SizedBox(
+					height: MediaQuery.of(ctx).size.height * 0.6,
+					width: MediaQuery.of(ctx).size.width * 0.8,
+					child: Column(
+					children: [
+						TextField(
+						decoration: const InputDecoration(
+							prefixIcon: Icon(Icons.search),
+							hintText: 'Szukaj po nazwie...',
+						),
+						onChanged: (val) => setD(() {
+							search = val;
+							filter();
+						}),
+						),
+						const Divider(),
+
+						Row(
+							mainAxisAlignment: MainAxisAlignment.end,
+							children: [
+								TextButton.icon(
+									label: const Text(''),
+									icon: Icon(
+										displayList.every((w) => temp.contains(w.id))
+											? Icons.check_box_outlined
+											: Icons.check_box_outline_blank
+									),
+									onPressed: () => setD(() {
+										if (displayList.every((w) => temp.contains(w.id))) {
+											temp.clear();
+										} else {
+											temp..clear()..addAll(displayList.map((w) => w.id));
+										}
+									}),
+								),
+
+								const SizedBox(width: 8),
+								TextButton(
+								onPressed: () => Navigator.pop(ctx),
+								child: const Text('Anuluj'),
+								),
+								const SizedBox(width: 4),
+								ElevatedButton(
+								onPressed: () {
+									setState(() => GlobalVars.selectedWordIds = temp);
+									Navigator.pop(ctx);
+								},
+								child: const Text('Zatwierdź'),
+								),
+							],
+						),
+						const Divider(),
+
+						Expanded(
+						child: ListView(
+							children: [
+							for (var pid in sortedProvinceIds) ...[
+								Padding(
+								padding: const EdgeInsets.symmetric(vertical: 8),
+								child: Text(
+									allProvinces.firstWhere((p) => p.id == pid).name,
+									style: const TextStyle(
+									fontWeight: FontWeight.bold,
+									fontSize: 16,
+									),
+								),
+								),
+								for (var w in groupedMap[pid]!) CheckboxListTile(
+								title: Text(w.name),
+								value: temp.contains(w.id),
+								onChanged: (v) => setD(() {
+									if (v == true) {
+									temp.add(w.id);
+									} else {
+									temp.remove(w.id);
+									}
+								}),
+								controlAffinity: ListTileControlAffinity.leading,
+								tileColor: Theme.of(ctx).colorScheme.surface,
+								selectedTileColor: Theme.of(ctx)
+									.colorScheme
+									.primary
+									.withAlpha((0.1 * 255).round()),
+								shape: RoundedRectangleBorder(
+									borderRadius: BorderRadius.circular(6)),
+								),
+							],
+							],
+						),
+						),
+					],
+					),
+				),
+				);
+			},
+			),
+		);
+	}
+
 
 	Future<void> _initLoginAndSession() async {
 		try {
@@ -447,11 +473,5 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 		}
 
 		_sessionTimer = Timer.periodic(const Duration(seconds: 30), (_) => ApiService.checkSession());
-	}
-
-	@override
-	void dispose() {
-		_sessionTimer?.cancel();
-		super.dispose();
 	}
 }
