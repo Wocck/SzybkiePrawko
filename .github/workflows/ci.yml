@@ -42,6 +42,9 @@ jobs:
     - name: Install required Android packages
       run: sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "ndk;29.0.13113456"
 
+    - name: Accept licenses (again after NDK install)
+      run: yes | sdkmanager --licenses
+
     - name: Install Flutter dependencies
       run: flutter pub get
 
