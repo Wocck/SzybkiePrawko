@@ -18,11 +18,20 @@ jobs:
       with:
         flutter-version: '3.29.3'
 
-    - name: Install dependencies
-      run: flutter pub get
+    - name: Set up Android SDK
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 33
+        target: default
+        arch: x86_64
+        disable-animations: true
+        script: echo "Android SDK is ready!"
 
     - name: Accept Android Licenses
       run: yes | sdkmanager --licenses
+
+    - name: Install dependencies
+      run: flutter pub get
 
     - name: Build APK
       run: flutter build apk --release --dart-define=LOGIN=${{ secrets.LOGIN }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
