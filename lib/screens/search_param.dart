@@ -310,12 +310,13 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 									}),
 								),
 								const Spacer(),
-								TextButton(
+								TextButton.icon(
 									onPressed: () => Navigator.pop(ctx),
-									child: const Text('Anuluj'),
+									label: const Text(''),
+									icon: Icon(Icons.clear_rounded)
 								),
 								const SizedBox(width: 8),
-								ElevatedButton(
+								ElevatedButton.icon(
 									onPressed: () {
 									setState(() {
 										selectedProvinceIds = temp;
@@ -326,7 +327,8 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 									});
 									Navigator.pop(ctx);
 									},
-									child: const Text('Zatwierdź'),
+									label: const Text(''),
+									icon: Icon(Icons.check_rounded)
 								),
 								],
 							),
@@ -479,17 +481,19 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 									}),
 								),
 								const Spacer(),
-								TextButton(
+								TextButton.icon(
+									icon: Icon(Icons.clear_rounded),
+									label: const Text(''),
 									onPressed: () => Navigator.pop(ctx),
-									child: const Text('Anuluj'),
 								),
 								const SizedBox(width: 8),
-								ElevatedButton(
+								ElevatedButton.icon(
 									onPressed: () {
-									setState(() => GlobalVars.selectedWordIds = temp);
-									Navigator.pop(ctx);
+										setState(() => GlobalVars.selectedWordIds = temp);
+										Navigator.pop(ctx);
 									},
-									child: const Text('Zatwierdź'),
+									label: const Text(''),
+									icon: Icon(Icons.check_rounded)
 								),
 								],
 							),
