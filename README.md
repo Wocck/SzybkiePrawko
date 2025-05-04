@@ -17,7 +17,11 @@
 </p>
 
 
-SzybkiePrawko is a Flutter application that allows you to search for exam centers, view available exam dates on a calendar, and locate centers on a map. It depends on `info-car.pl` website for data retrieval.
+SzybkiePrawko is a Flutter application that makes it easier to search for available dates for practical driving exams. It allows to view exam dates on a calendar, locate centers on a map and search multiple exam centers at once. It depends on `info-car.pl` website for data retrieval.
+
+<div align="center">
+	<img src="assets/app_screen.png" alt="App screenshot" style="height: 60%;" />
+</div>
 
 ## Prerequisites
 
@@ -43,16 +47,16 @@ SzybkiePrawko is a Flutter application that allows you to search for exam center
 
 ```bash
 flutter run -d windows \
-	--dart-define=LOGIN='<your-login>' \
-	--dart-define=PASSWORD='<your-password>'
+	--dart-define=LOGIN='<InfoCar.pl-login>' \
+	--dart-define=PASSWORD='<InfoCar.pl-password>'
 ```
 
 ## Building a Release APK
 
 ```bash
 flutter build apk --release \
-	--dart-define=LOGIN='<your-login>' \
-	--dart-define=PASSWORD='<your-password>'
+	--dart-define=LOGIN='<InfoCar.pl-login>' \
+	--dart-define=PASSWORD='<InfoCar.pl-password>'
 ```
 Once the build completes, the APK will be located at: `build/app/outputs/flutter-apk/app-release.apk`.
 
