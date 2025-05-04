@@ -9,50 +9,44 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      FLUTTER_VERSION: '3.29.3'
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.29.3'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
-    - name: Set up Java (required by Flutter)
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Set up Java (Temurin 17)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Set up Android SDK (manual)
-      run: |
-        mkdir -p $HOME/android-sdk/cmdline-tools
-        cd $HOME/android-sdk/cmdline-tools
-        curl -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-        unzip tools.zip
-        rm tools.zip
-        mv cmdline-tools latest
-        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
-        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+      - name: Install Android SDK & NDK
+        uses: google-github-actions/setup-android@v2
+        with:
+          api-level: 33
+          build-tools: '33.0.2'
+          ndk: '29.0.13113456'
+          components: |
+            platform-tools
+            platforms;android-33
 
-    - name: Accept licenses
-      run: yes | sdkmanager --licenses
+      - name: Flutter pub get
+        run: flutter pub get
 
-    - name: Install required Android packages
-      run: sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "ndk;29.0.13113456"
+      - name: Build release APK
+        run: flutter build apk --release \
+          --dart-define=LOGIN=${{ secrets.LOGIN }} \
+          --dart-define=PASSWORD=${{ secrets.PASSWORD }}
 
-    - name: Accept licenses (again after NDK install)
-      run: yes | sdkmanager --licenses
-
-    - name: Install Flutter dependencies
-      run: flutter pub get
-
-    - name: Build APK
-      run: flutter build apk --release --dart-define=LOGIN=${{ secrets.LOGIN }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
