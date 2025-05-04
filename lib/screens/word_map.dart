@@ -347,7 +347,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 						),
 						const SizedBox(width: 16),
 						if (events.isNotEmpty)
-							Text('(${events.length} terminów)', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+							Text('(${formatTerminCount(events.length)})', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
 						],
 					),
 					const Divider(height: 20),
@@ -378,6 +378,18 @@ class _WordMapScreenState extends State<WordMapScreen> {
 			),
 			);
 		},
+		);
+	}
+
+	String formatTerminCount(int count) {
+		return Intl.plural(
+			count,
+			locale: 'pl_PL',
+			zero: 'Brak terminów',
+			one: '1 termin',
+			few: '$count terminy',
+			many: '$count terminów',
+			other: '$count terminów',
 		);
 	}
 }
