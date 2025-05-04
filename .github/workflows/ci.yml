@@ -9,9 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      FLUTTER_VERSION: '3.29.3'
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,25 +16,28 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.29.3'
 
-      - name: Set up Java (Temurin 17)
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Android SDK & NDK
+      - name: Set up Android SDK
         uses: google-github-actions/setup-android@v2
         with:
           api-level: 33
           build-tools: '33.0.2'
-          ndk: '29.0.13113456'
+          ndk-version: '23.2.8568313'
+          cmake: '3.22.1'
           components: |
             platform-tools
-            platforms;android-33
+            cmdline-tools
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
 
-      - name: Flutter pub get
+      - name: Install Flutter dependencies
         run: flutter pub get
 
       - name: Build release APK
