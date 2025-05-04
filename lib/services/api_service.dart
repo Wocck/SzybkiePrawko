@@ -178,7 +178,7 @@ class ApiService {
 			final token = GlobalVars.bearerToken;
 
 			final body = jsonEncode({
-				"category": "A",
+				"category": GlobalVars.selectedCategory,
 				"startDate": startDate.toIso8601String(),
 				"endDate": endDate.toIso8601String(),
 				"wordId": wId.toString(),

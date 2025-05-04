@@ -24,6 +24,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 	bool _useTimeFilter = false;
 	TimeOfDay _startTime = const TimeOfDay(hour: 5, minute: 0);
 	TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
+	String _selectedCategory = GlobalVars.selectedCategory;
 	
 	@override
 	void initState() {
@@ -57,7 +58,34 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 					child: Column(
 					mainAxisSize: MainAxisSize.min,
 					crossAxisAlignment: CrossAxisAlignment.center,
-					children: [
+					children: [ 
+						IntrinsicWidth( 
+							child: DropdownButtonFormField<String>(
+								decoration: const InputDecoration(
+									labelText: 'Kat.',
+									border: OutlineInputBorder(),
+								),
+								value: _selectedCategory,
+								items: GlobalVars.examCategories
+								.map((cat) => DropdownMenuItem(
+									value: cat,
+									child: Text(cat),
+								))
+								.toList(),
+								onChanged: (cat) {
+									if (cat == null) return;
+									setState(() {
+										_selectedCategory = cat;
+										GlobalVars.selectedCategory = cat;
+										GlobalVars.selectedWordIds.clear();
+										selectedProvinceIds.clear();
+										GlobalVars.examEvents.clear();
+									});
+								},
+							),
+						),
+						const SizedBox(height: 24),
+
 						ElevatedButton(
 						onPressed: _showProvincesDialog,
 						child: Text(
@@ -135,7 +163,7 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 						mainAxisAlignment: MainAxisAlignment.center,
 						children: [
 						ElevatedButton(
-							onPressed: (!GlobalVars.sessionActive || _isLoading || exceedMax)
+							onPressed: (!GlobalVars.sessionActive || _isLoading || exceedMax || GlobalVars.selectedWordIds.isEmpty)
 								? null
 								: () async {
 										final messenger = ScaffoldMessenger.of(context);
@@ -176,7 +204,15 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 									},
 							child: const Text('Wyszukaj'),
 							),
-							
+
+							if (GlobalVars.selectedWordIds.isEmpty) ...[
+								const SizedBox(width: 12),
+								const Text(
+									'Zaznacz ośrodki',
+									style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+								),
+							],
+
 							if (exceedMax) ...[
 								const SizedBox(width: 12),
 								const Text(
@@ -587,9 +623,11 @@ class _SearchParamState extends State<SearchParam> with AutomaticKeepAliveClient
 			builder: (ctx) => AlertDialog(
 			title: const Text('Jak używać'),
 			content: const Text(
-				'1. Wybierz województwa i ośrodki egzaminacyjne.\n'
+				'1. Wybierz Kategorię, Województwa i Ośrodki egzaminacyjne.\n'
 				'2. Opcjonalnie ustaw filtr godzinowy.\n'
-				'3. Kliknij "Wyszukaj", aby pobrać dostępne terminy (Max 4 ośrodki).\n\n'
+				'3. Kliknij "Wyszukaj", aby pobrać dostępne terminy (Max 4 ośrodki jednocześnie).\n'
+				'4. Możesz też przejść do mapy ośrodków i wyszukiwać terminy dla każdego ośrodka osobno.\n\n'
+				
 				'⚠️ Uwaga: Ze względu na ograniczenia portalu Info-Car można wyszukać maksymalnie 4 ośrodki jednocześnie.\n'
 				'Po wybraniu ośrodkó możesz ładować terminy dla poszczególnych ośrodków klikając na nie na mapie.\n\n'
 				'⚠️ Uwaga: Modele motocykli są w wiekszości poprawne ale w niektórych przypadkach mogą się różnić, warto upewnić się na stronie danego WORD-u.\n\n'

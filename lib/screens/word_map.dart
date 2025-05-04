@@ -163,14 +163,30 @@ class _WordMapScreenState extends State<WordMapScreen> {
 	AppBar _buildAppBar() {
 		return AppBar(
 		title: Center(
-			child: const Text('Mapa ośrodków')
+			child: Text.rich(
+				TextSpan(
+					children: [
+					const TextSpan(text: 'Kalendarz terminów (kat. '),
+					TextSpan(
+						text: GlobalVars.selectedCategory,
+						style: TextStyle(
+						color: Theme.of(context).colorScheme.secondary,
+						fontWeight: FontWeight.bold,
+						),
+					),
+					const TextSpan(text: ')'),
+					],
+				),
+				textAlign: TextAlign.center,
+				),
 		),
 		actions: [
-			IconButton(
-				icon: const Icon(Icons.filter_list),
-				tooltip: 'Filtruj po modelach',
-				onPressed: _openMotoFilterDialog,
-			),
+			if (GlobalVars.selectedCategory == 'A')
+				IconButton(
+					icon: const Icon(Icons.filter_list),
+					tooltip: 'Filtruj po modelach',
+					onPressed: _openMotoFilterDialog,
+				),
 		],
 		);
 	}
@@ -246,6 +262,10 @@ class _WordMapScreenState extends State<WordMapScreen> {
 			(m) => m.wordId == w.id,
 			orElse: () => WordMoto(wordId: w.id, motoModel: '-', wordName: '-'),
 		);
+		String motoModelInfo = "";
+		if (GlobalVars.selectedCategory == 'A') {
+			motoModelInfo = ' (${motoEntry.motoModel})';
+		}
 
 		showModalBottomSheet(
 		context: context,
@@ -270,7 +290,7 @@ class _WordMapScreenState extends State<WordMapScreen> {
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
 					Text(
-						'${w.name} —> ${motoEntry.motoModel}',
+						'${w.name}$motoModelInfo',
 						style: const TextStyle(
 							fontSize: 18, fontWeight: FontWeight.bold
 						),

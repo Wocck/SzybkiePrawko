@@ -15,7 +15,12 @@ class GlobalVars {
 	static Set<String> distinctMotoModels = {};
 	static LatLng? lastMapCenter;
 	static double? lastMapZoom;
-
+	static List<String> examCategories = [
+		'A', 'A1', 'A2', 'AM', 'B', 'B1', 'B+E',
+		'C', 'C1', 'C+E', 'C1+E', 'D', 'D1', 'D+E',
+		'D1+E', 'T', 'PT'
+	];
+	static String selectedCategory = 'A';
 	static final maxWords = 4;
 }
 

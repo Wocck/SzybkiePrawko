@@ -116,9 +116,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 							(m) => m.wordId == e.wordId,
 							orElse: () => WordMoto(wordId: e.wordId, motoModel: '-', wordName: '-'),
 						);
+						String motoModelInfo = "";
+						if (GlobalVars.selectedCategory == 'A') {
+							motoModelInfo = ', ${motoEntry.motoModel}';
+						}
 						return ListTile(
 							title: Text(e.wordName),
-							subtitle: Text('${DateFormat.Hm('pl_PL').format(e.dateTime)}, ${motoEntry.motoModel}'),
+							subtitle: Text('${DateFormat.Hm('pl_PL').format(e.dateTime)}$motoModelInfo'),
 							trailing: Text('Miejsc: ${e.places}'), 
 						);
 						},
@@ -139,7 +143,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
 	return Scaffold(
 		appBar: AppBar(
 			title: Center(
-				child: const Text('Kalendarz terminów')
+				child: Text.rich(
+				TextSpan(
+					children: [
+					const TextSpan(text: 'Kalendarz terminów (kat. '),
+					TextSpan(
+						text: GlobalVars.selectedCategory,
+						style: TextStyle(
+						color: Theme.of(context).colorScheme.secondary,
+						fontWeight: FontWeight.bold,
+						),
+					),
+					const TextSpan(text: ')'),
+					],
+				),
+				textAlign: TextAlign.center,
+				),
 			),
 		),
 		body: Column(
